@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class product extends Model
 {
-    protected $fillable = ['name', 'price','qunatity'];
+ protected $fillable = ['name', 'price', 'image'];
+
     protected $table = 'products';
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class,'product_user');
     }
 }

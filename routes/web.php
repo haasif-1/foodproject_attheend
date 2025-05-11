@@ -51,22 +51,21 @@ Route::get('updateuserdata',[projectuserscontroller::class,'updatauserinfo'])->n
 
 Route::put('editmyselfdata/{id}',[projectuserscontroller::class,'edituserinfo'])->name('editmyselfdata');
 
+Route::get('showallproducts',[assignproduct::class,'showproducts'])->name('showallproducts');
 
-Route::get('selectuser',[assignproduct::class,'showUserSelectForm'])->name('selectuser');
+Route::post('saveafterselect',[addtocartcontroller::class,'addtocart'])->name('saveafterselect');
 
-Route::post('selectedone',[assignproduct::class,'handleSelectedUser'])->name('selectedone');
+Route::post('buyingprocess',[assignproduct::class,'buy_function'])->name('buyingprocess');
 
-Route::get( 'showmyproducts',[assignproduct::class,'showassignproduct'])->name('showmyproducts');
+Route::post('placeorder',[assignproduct::class,'placeorder_function'])->name('placeorder');
 
-Route::get( 'viewordertoadmin',[assignproduct::class,'showCartData'])->name('viewordertoadmin');
+Route::get('cartedproduct',[addtocartcontroller::class,'showcart'])->name('cartedproduct');
 
-Route::get('done/{id}', [addtocartcontroller::class, 'processCart'])->name('donebyadmin');
+Route::get('orderedproduct',[assignproduct::class,'myOrders'])->name('orderedproduct');
 
-Route::post('addtocarttable',[addtocartcontroller::class,'storeToCart'])->name('addtocarttable');
+Route::get('orderslist',[assignproduct::class,'adminview_orders'])->name('orderslist');
 
-Route::post('/admin/add-stock', [addproductcontroller::class, 'addStock'])->name('admin.addstock');
 
-Route::get('/my-cart', [addtocartcontroller::class, 'showUserCart'])->name('user.cart');
 
 
 Route::get('adding', function () {
@@ -76,6 +75,10 @@ Route::get('adding', function () {
 Route::get('admin', function () {
     return view('pages.adminpage');
 })->name("admin_dashboard");
+
+
+Route::get('user_dashboard',[logincontroller::class,'userHome'])->name('user_dashboard');
+
 
 Route::get('register', function () {
     return view('pages.addnewuser');

@@ -150,22 +150,17 @@
             <a href="{{ route('adding') }}" class="nav-link">
                 <i class="fas fa-plus-circle"></i> Add Products
             </a>
-            <a href="{{ route('register') }}" class="nav-link">
-                <i class="fas fa-plus-circle"></i> Add user
-            </a>
-            <a href="{{ route('selectuser') }}" class="nav-link">
-                <i class="fas fa-plus-circle"></i> Assign Products
-            </a>
-
+    
             <a href="{{ route('showitem') }}" class="nav-link">
                 <i class="fas fa-list"></i> Products List
             </a>
+
             <a href="{{ route('userlist') }}" class="nav-link">
                 <i class="fas fa-list"></i> Users List
             </a>
 
-            <a href="{{ route('viewordertoadmin') }}" class="nav-link">
-                <i class="fas fa-list"></i> Order List
+                <a href="{{ route('orderslist') }}" class="nav-link">
+                <i class="fas fa-list"></i> Orders List
             </a>
 
             <a href="{{ route('login') }}" class="nav-link">

@@ -100,11 +100,3 @@ public function edituser(Request $req, $id)
 }
 
     }
-
-
-    // function userinfo(){
-
-    //     $user = Auth::user();
-    //     return view('pages.mydata',["data"=>$user]);
-
-    // }

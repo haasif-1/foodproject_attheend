@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\order;
 use App\Models\product;  
 use App\Models\User;
 use Spatie\Permission\Models\Role;
@@ -10,59 +11,112 @@ use Illuminate\Support\Facades\Auth;
 
 class assignproduct extends Controller
 {
-    function showUserSelectForm()
-    {
-        $users = User::role('user')->get(); 
+   
+function showproducts(){
+    $products = Product::all();
+    return view("pages.allproducts",compact("products"));
+}
 
-       
-        $products = product::all(); 
 
-        // $nullproducts = product::whereDoesntHave('users')->get();
 
-        return view('pages.selectuser', compact('users', 'products'));
+public function buy_function(Request $request)
+{
+
+    $productIds = $request->input('products');
+
+    if (!$productIds) {
+        return redirect()->back()->with('error', 'Please select at least one product.');
     }
 
-    public function handleSelectedUser(Request $request)
-    {
-        $user = User::find($request->user_id);
-    
-        if ($user && $user->hasRole('user')) {
-            $productIds = $request->input('product_ids', []);
-    
-            if (!empty($productIds)) {
-                $user->products()->syncWithoutDetaching($productIds);
-    
-                return redirect()->back()->with('success', 'Products assigned successfully.');
-            }
-        }
-      
-        return redirect()->back()->with('error', 'Invalid User or No Products Selected.');
+    $products = Product::whereIn('id', $productIds)->get();
+
+    return view('pages.ordercheckout', compact('products', 'productIds'));
+}
+
+
+public function placeorder_function(Request $request)
+{
+    $request->validate([
+        'phone' => 'required',
+        'country' => 'required',
+        'province' => 'required',
+        'city' => 'required',
+        'street' => 'required',
+        'products' => 'required|array',
+    ]);
+
+    $user = Auth::user();
+
+    $flattened = [];
+
+foreach ($request->products as $id) {
+    if (str_contains($id, ',')) {
+        $flattened = array_merge($flattened, explode(',', $id));
+    } else {
+        $flattened[] = $id;
+    }
+}
+
+$uniqueProductIds = array_unique($flattened);
+
+  $totalAmount = Product::whereIn('id', $uniqueProductIds)->sum('price');
+
+
+
+order::create([
+    'user_id'     => $user->id,
+    'user_name'   => $user->name,
+    'email'       => $user->email,
+    'phone'       => $request->phone,
+    'country'     => $request->country,
+    'province'    => $request->province,
+    'city'        => $request->city,
+    'street'      => $request->street,
+    'product_ids' => json_encode($uniqueProductIds),
+     'amount'      => $totalAmount,
+]);
+
+
+    return redirect()->route('cartedproduct')->with('success', 'Order placed successfully!');
+}
+
+
+public function myOrders()
+{
+    $user = Auth::user();
+
+    $orders = order::where('user_id', $user->id)->get();
+
+    foreach ($orders as $order) {
+        $productIds = json_decode($order->product_ids, true);
+        $products = product::whereIn('id', $productIds)->get();
+        $order->products = $products;
     }
 
+    return view('pages.viewmyorder', compact('orders'));
+}
 
-    function showassignproduct(){
-        $user = Auth::user();
+public function adminview_orders()
+{
+$orders = Order::all();
 
-        if ($user->hasRole('user')) {
-            
-            $products = $user->products;
-            return view('pages.myproducts', compact('products'));
-        }
+foreach ($orders as $order) {
+    $productIds = json_decode($order->product_ids, true) ?? [];
 
-
+    if (is_array($productIds) && count($productIds) > 0) {
+        $products = Product::whereIn('id', $productIds)->get();
+    } else {
+        $products = collect();
     }
-    public function showCartData()
-    {
-       
-        $carts = \App\Models\cart::join('users', 'carts.user_id', '=', 'users.id')
-        ->select('carts.id', 'carts.product_name', 'carts.quantity', 'users.name as user_name', 'users.id as user_id')
-        ->get();
-    
-    
-        // Pass the cart data to the view
-        return view('pages.adminvieworder', compact('carts'));
-       
-    }
+    $order->product_items = $products;
+}
+
+
+    return view('pages.adminordersview', compact('orders'));
+}
+
+
+
 
   
     

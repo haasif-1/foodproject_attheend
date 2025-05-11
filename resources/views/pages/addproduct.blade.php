@@ -131,7 +131,7 @@
             <marquee behavior="scroll" direction="left">Add Your New Food Product</marquee>
         </div>
 
-        <form action="{{ route('addproducts') }}" method="post">
+        <form action="{{ route('addproducts') }}" method="post" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group">
@@ -141,11 +141,10 @@
             <div class="form-group">
                 <input type="text" name="price" placeholder="Enter product price ($)">
             </div>
-
-            <div class="form-group">
-                <input type="text" name="quantity" placeholder="Enter product quantity ">
-            </div>
-
+            
+<div   class="form-group">
+           <input type="file" name="image" accept="image/*" required>
+</div>
             <button type="submit">Add Food Product</button>
 
             <p class="form-footer">Fill in all required fields to add a new food item</p>

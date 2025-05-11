@@ -15,7 +15,7 @@
         <td>Name</td>
         <td>Email</td>
         <td>Password</td>
-        <td>operayion
+        <td>operation
         </td>
 
       </tr>
@@ -28,11 +28,14 @@
     <td>
     <a href="{{ route('updateuserdata')}}">Update</a>
   </td>
-
-
       </tr>
 
     </table>
+
+      <form action="{{ route('user_dashboard') }}"  class="back-button-form">
+           
+            <button type="submit">Back to Dashboard</button>
+        </form>
 
 
 

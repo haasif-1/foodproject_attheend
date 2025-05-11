@@ -35,6 +35,7 @@
             text-align: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             transition: transform 0.2s;
+            position: relative;
         }
 
         .product-card:hover {
@@ -61,51 +62,35 @@
             font-weight: bold;
         }
 
-        .product-actions {
+        .product-checkbox {
             margin-top: 10px;
         }
 
-        .product-actions a {
-            display: inline-block;
-            margin: 5px;
-            padding: 6px 12px;
-            background-color: #3498db;
-            color: white;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 14px;
+        .product-actions {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
         }
 
-        .product-actions a:hover {
-            background-color: #2980b9;
-        }
-
-        /* Back button form styling */
-        .back-button-form {
-            margin: 40px auto;
-            text-align: center;
-        }
-
-        .back-button-form button {
-            background-color: #2ecc71;
+        .product-actions button {
+            padding: 8px 14px;
+            background-color: #ff6f00;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
+            border-radius: 4px;
+            font-size: 14px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background-color 0.3s ease;
         }
 
-        .back-button-form button:hover {
-            background-color: #27ae60;
-            transform: translateY(-2px);
+        .product-actions button:hover {
+            background-color: #e65c00;
         }
     </style>
 </head>
 <body>
-
-    <h1>Available Products</h1>
+<form method="POST" action="{{ route('saveafterselect') }}">
+    @csrf
 
     <div class="product-grid">
         @foreach ($products as $pro)
@@ -113,23 +98,21 @@
                 <img src="{{ asset('storage/products/'.$pro->image) }}" alt="Product Image">
                 <div class="product-price">Rs. {{ $pro->price }}</div>
                 <div class="product-name">{{ $pro->name }}</div>
-                <div class="product-actions">
-                    <a href="{{ route('deleteproduct', ['id' => $pro->id]) }}">Delete</a>
-                    <a href="{{ route('updateproduct', ['id' => $pro->id]) }}">Update</a>
+
+                <div class="product-checkbox">
+                    <input type="checkbox" name="products[]" value="{{ $pro->id }}"> Select
                 </div>
             </div>
         @endforeach
-
-        @if ($products->isEmpty())
-            <div class="product-card" style="grid-column: span 3; text-align: center;">
-                <p>No products available.</p>
-            </div>
-        @endif
     </div>
 
-    <form action="{{ route('admin_dashboard') }}" class="back-button-form">
-        <button type="submit">Back to Dashboard</button>
-    </form>
-
+    <div class="product-actions">
+        <button type="submit">Add to Cart</button>
+    </div>
+</form>
+   <form action="{{ route('user_dashboard') }}"  class="back-button-form">
+           
+            <button type="submit">Back to Dashboard</button>
+        </form>
 </body>
 </html>

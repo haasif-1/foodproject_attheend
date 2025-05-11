@@ -12,7 +12,6 @@
 
 
 <form action="{{route('userdatacheck')}}" method="post" >
-
     @csrf
 <button>  My Info. </button>
 
@@ -27,17 +26,16 @@
 
 </form>
 
-<form action="{{route('showmyproducts')}}" >
-<button>  My products </button>
+
+<a href="{{route('showallproducts')}}">Products</a>
+
+<a href="{{route('cartedproduct')}}">Cart Products</a>
+
+<a href="{{route('orderedproduct')}}">My order</a>
+
+
 
 </form>
-
-<form action="{{route('user.cart')}}" >
-    <button>  My Orders </button>
-    
-    </form>
-    
-
 
 
 

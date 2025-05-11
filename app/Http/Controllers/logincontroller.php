@@ -37,4 +37,10 @@ class logincontroller extends Controller
 
 
     }
+
+    function userHome() {
+    $userdata = Auth::user();
+    return view('pages.userpage', compact('userdata'));
+}
+
 }
