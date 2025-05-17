@@ -7,12 +7,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 class projectuserscontroller extends Controller
 {
  function userlist()
 {
-    $agents = User::role('user')->get(); 
+    // The more direct way to get users with the 'user' role
+    $userRole = Role::findByName('user');
+    $agents = $userRole->users;
 
     return view('pages.userlist', compact('agents'));
 }

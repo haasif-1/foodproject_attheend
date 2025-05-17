@@ -2,7 +2,7 @@
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-      <a href="index.html" class="app-brand-link">
+      <a href="{{ Auth::check() && Auth::user()->hasRole('admin') ? route('admin_dashboard') : route('user_dashboard') }}" class="app-brand-link">
         <span class="app-brand-logo demo">
           <svg
             width="25"
@@ -58,7 +58,13 @@
             </g>
           </svg>
         </span>
-        <span class="app-brand-text demo menu-text fw-bolder ms-2">Sneat</span>
+        <span class="app-brand-text demo menu-text fw-bolder ms-2">
+          @if(Auth::check() && Auth::user()->hasRole('admin'))
+            Admin Panel
+          @else
+            User Panel
+          @endif
+        </span>
       </a>
 
       <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -69,14 +75,117 @@
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
-      <!-- Dashboard -->
-      <li class="menu-item active">
-        <a href="index.html" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-home-circle"></i>
-          <div data-i18n="Analytics">Dashboard</div>
-        </a>
+      @if(Auth::check() && Auth::user()->hasRole('admin'))
+        <!-- Admin Dashboard -->
+        <li class="menu-item {{ request()->routeIs('admin_dashboard') ? 'active' : '' }}">
+          <a href="{{ route('admin_dashboard') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+            <div>Dashboard</div>
+          </a>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('adding') ? 'active' : '' }}">
+          <a href="{{ route('adding') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-plus-circle"></i>
+            <div>Add Products</div>
+          </a>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('showitem') ? 'active' : '' }}">
+          <a href="{{ route('showitem') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-list-ul"></i>
+            <div>Products List</div>
+          </a>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('userlist') ? 'active' : '' }}">
+          <a href="{{ route('userlist') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-user"></i>
+            <div>Users List</div>
+          </a>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('orderslist') ? 'active' : '' }}">
+          <a href="{{ route('orderslist') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-package"></i>
+            <div>Orders List</div>
+          </a>
+        </li>
+
+      @else
+        <!-- User Dashboard -->
+        <li class="menu-item {{ request()->routeIs('user_dashboard') ? 'active' : '' }}">
+          <a href="{{ route('user_dashboard') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+            <div>Dashboard</div>
+          </a>
+        </li>
+
+        <!-- My Account -->
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">My Account</span>
+        </li>
+
+        <li class="menu-item">
+          <form action="{{ route('userdatacheck') }}" method="post" class="menu-link py-2">
+            @csrf
+            <div class="d-grid gap-2 px-3">
+              <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bx bx-user me-1"></i> My Information
+              </button>
+            </div>
+          </form>
+        </li>
+
+        <li class="menu-item">
+          <form action="{{ route('changeuserpassword') }}" method="post" class="menu-link py-2">
+            @csrf
+            <div class="d-grid gap-2 px-3">
+              <button type="submit" class="btn btn-warning btn-sm">
+                <i class="bx bx-lock-alt me-1"></i> Change Password
+              </button>
+            </div>
+          </form>
+        </li>
+
+        <!-- Shopping -->
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">Shopping</span>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('showallproducts') ? 'active' : '' }}">
+          <a href="{{ route('showallproducts') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-store"></i>
+            <div>Browse Products</div>
+          </a>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('cartedproduct') ? 'active' : '' }}">
+          <a href="{{ route('cartedproduct') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-cart"></i>
+            <div>My Cart</div>
+          </a>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('orderedproduct') ? 'active' : '' }}">
+          <a href="{{ route('orderedproduct') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-package"></i>
+            <div>My Orders</div>
+          </a>
+        </li>
+      @endif
+
+      <!-- Logout - Always Visible -->
+      <li class="menu-header small text-uppercase">
+        <span class="menu-header-text">Account</span>
       </li>
 
-       </ul>
+      <li class="menu-item">
+        <a href="{{ route('login') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-log-out"></i>
+          <div>Log Out</div>
+        </a>
+      </li>
+    </ul>
   </aside>
   <!-- / Menu -->
