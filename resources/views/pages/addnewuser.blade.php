@@ -1,94 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Register</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #f4f7fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+@extends('layout.app')
 
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            text-align: center;
-        }
+@section('content')
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4">
+        <span class="text-muted fw-light">Users /</span> Add New User
+    </h4>
 
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        form input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        form input:focus {
-            border-color: #007bff;
-        }
-
-        form button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        form button:hover {
-            background-color: #0056b3;
-        }
-
-        .footer-text {
-            margin-top: 10px;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Register</h1>
-        <form action="{{route ('adduser')}}" method="post" >
-
-            @csrf
-            <input type="text" name="name" placeholder="Enter name" required>
-            <br>
-
-            <input type="email" name="email" placeholder="Enter email" required>
-            <br>
-
-            <input type="password" name="password" placeholder="Enter password" required>
-            <br>
-
-            <button type="Add">Register</button>
-        </form>
-
-        <form action="{{ route('admin_dashboard') }}" class="back-button-form">
-            <button type="submit">Back to Dashboard</button>
-        </form>
-
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Register a New User</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('adduser') }}" method="post">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" required autofocus />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required />
+                        </div>
+                        
+                        <div class="mb-3 form-password-toggle">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" required aria-describedby="password" />
+                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <button class="btn btn-primary d-grid w-100" type="submit">Register User</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+
+    <div class="text-end mt-4">
+        <a href="{{ route('admin_dashboard') }}" class="btn btn-secondary">
+            <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+@endsection

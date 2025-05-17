@@ -1,118 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Grid</title>
+@extends('layout.app')
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-        }
+@section('content')
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4">
+        <span class="text-muted fw-light">Products /</span> All Products
+    </h4>
 
-        h1 {
-            text-align: center;
-            margin: 30px 0;
-            color: #333;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            width: 90%;
-            margin: auto;
-        }
-
-        .product-card {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            position: relative;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .product-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        .product-name {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .product-price {
-            margin-top: 5px;
-            font-size: 18px;
-            color: #e74c3c;
-            font-weight: bold;
-        }
-
-        .product-checkbox {
-            margin-top: 10px;
-        }
-
-        .product-actions {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-        }
-
-        .product-actions button {
-            padding: 8px 14px;
-            background-color: #ff6f00;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .product-actions button:hover {
-            background-color: #e65c00;
-        }
-    </style>
-</head>
-<body>
-<form method="POST" action="{{ route('saveafterselect') }}">
-    @csrf
-
-    <div class="product-grid">
-        @foreach ($products as $pro)
-            <div class="product-card">
-                <img src="{{ asset('storage/products/'.$pro->image) }}" alt="Product Image">
-                <div class="product-price">Rs. {{ $pro->price }}</div>
-                <div class="product-name">{{ $pro->name }}</div>
-
-                <div class="product-checkbox">
-                    <input type="checkbox" name="products[]" value="{{ $pro->id }}"> Select
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Available Products</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('saveafterselect') }}">
+                @csrf
+                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+                    @foreach ($products as $pro)
+                        <div class="col">
+                            <div class="card h-100">
+                                <img class="card-img-top" src="{{ asset('storage/products/'.$pro->image) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $pro->name }}</h5>
+                                    <p class="card-text text-primary fw-semibold">Rs. {{ $pro->price }}</p>
+                                    <div class="form-check mt-3">
+                                        <input class="form-check-input" type="checkbox" name="products[]" value="{{ $pro->id }}" id="product-{{ $pro->id }}">
+                                        <label class="form-check-label" for="product-{{ $pro->id }}">
+                                            Select this product
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-            </div>
-        @endforeach
-    </div>
 
-    <div class="product-actions">
-        <button type="submit">Add to Cart</button>
+                <div class="row">
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bx bx-cart-add me-1"></i> Add to Cart
+                        </button>
+                        <a href="{{ route('user_dashboard') }}" class="btn btn-secondary">
+                            <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</form>
-   <form action="{{ route('user_dashboard') }}"  class="back-button-form">
-           
-            <button type="submit">Back to Dashboard</button>
-        </form>
-</body>
-</html>
+</div>
+@endsection

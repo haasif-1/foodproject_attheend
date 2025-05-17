@@ -1,157 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Add Food Products</title>
-    <style>
-        :root {
-            --primary-color: #4CAF50; /* Green theme for food products */
-            --secondary-color: #f8f9fa;
-            --accent-color: #FF9800; /* Orange accent */
-            --text-color: #333;
-            --border-radius: 5px;
-            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+@extends('layout.app')
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+@section('content')
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4">
+        <span class="text-muted fw-light">Products /</span> Add New Product
+    </h4>
 
-        body {
-            background-color: var(--secondary-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        .marquee {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 0;
-            margin-bottom: 2rem;
-            font-weight: 500;
-            font-size: 1.1rem;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-        }
-
-        .form-container {
-            background: white;
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            transition: border 0.3s ease;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-        }
-
-        input[type="text"]::placeholder {
-            color: #aaa;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            width: 100%;
-            transition: background-color 0.3s ease, transform 0.1s ease;
-        }
-
-        button:hover {
-            background-color: #3e8e41;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        .form-footer {
-            text-align: center;
-            margin-top: 1rem;
-            color: #666;
-        }
-
-        @media (max-width: 600px) {
-            .form-container {
-                padding: 1.5rem;
-            }
-
-            input[type="text"], button {
-                padding: 10px 15px;
-            }
-
-            .marquee {
-                font-size: 1rem;
-                padding: 10px 0;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="form-container">
-        <h1>Food Product Management</h1>
-        <div class="marquee">
-            <marquee behavior="scroll" direction="left">Add Your New Food Product</marquee>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <h5 class="card-header">Food Product Management</h5>
+                <div class="card-body">
+                    <form action="{{ route('addproducts') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productName" class="form-label">Product Name</label>
+                                <input type="text" class="form-control" id="productName" name="name" placeholder="Enter food product name" required />
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="productPrice" class="form-label">Product Price ($)</label>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text">$</span>
+                                    <input type="text" class="form-control" id="productPrice" name="price" placeholder="Enter product price" required />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="productImage" class="form-label">Product Image</label>
+                            <input class="form-control" type="file" id="productImage" name="image" accept="image/*" required />
+                            <div class="form-text">Upload a high-quality image of the food product</div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary me-2">Add Food Product</button>
+                            <a href="{{ route('admin_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <form action="{{ route('addproducts') }}" method="post" enctype="multipart/form-data">
-            @csrf
-
-            <div class="form-group">
-                <input type="text" name="name" placeholder="Enter food product name">
-            </div>
-
-            <div class="form-group">
-                <input type="text" name="price" placeholder="Enter product price ($)">
-            </div>
-            
-<div   class="form-group">
-           <input type="file" name="image" accept="image/*" required>
-</div>
-            <button type="submit">Add Food Product</button>
-
-            <p class="form-footer">Fill in all required fields to add a new food item</p>
-        </form>
-        <form action="{{ route('admin_dashboard') }}" class="back-button-form">
-            <button type="submit">Back to Dashboard</button>
-        </form>
     </div>
-</body>
-</html>
+</div>
+@endsection

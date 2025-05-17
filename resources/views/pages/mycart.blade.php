@@ -1,94 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Your Cart</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f9;
-            padding: 20px;
-        }
+@extends('layout.app')
 
-        h1 {
-            text-align: center;
-        }
+@section('content')
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4">
+        <span class="text-muted fw-light">Shopping /</span> My Cart
+    </h4>
 
-        .cart-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-            width: 90%;
-            margin: auto;
-        }
-
-        .cart-card {
-            background: white;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .cart-card img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        .product-name {
-            margin-top: 10px;
-            font-size: 16px;
-        }
-
-        .product-price {
-            color: #e74c3c;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
-        .product-checkbox {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>Your Cart</h1>
-
-    <form method="POST" action="{{ route('buyingprocess') }}">
-        @csrf
-
-        <div class="cart-grid">
-            @forelse ($cartProducts as $product)
-                <div class="cart-card">
-                    <img src="{{ asset('storage/products/'.$product->image) }}" alt="Product Image">
-                    <div class="product-name">{{ $product->name }}</div>
-                    <div class="product-price">Rs. {{ $product->price }}</div>
-                       <div class="product-checkbox">
-                        <input type="checkbox" name="products[]" value="{{ $product->id }}">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Selected Products</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('buyingprocess') }}">
+                @csrf
+                
+                @if(count($cartProducts) > 0)
+                    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+                        @foreach($cartProducts as $product)
+                            <div class="col">
+                                <div class="card h-100 position-relative">
+                                    <div class="position-absolute top-0 start-0 m-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="products[]" value="{{ $product->id }}" id="product-{{ $product->id }}">
+                                        </div>
+                                    </div>
+                                    <img class="card-img-top" src="{{ asset('storage/products/'.$product->image) }}" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ $product->name }}</h5>
+                                        <p class="card-text text-primary fw-semibold">Rs. {{ $product->price }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                </div>
-            @empty
-                <p style="text-align: center; width: 100%;">No products in your cart.</p>
-            @endforelse
+                    
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bx bx-shopping-bag me-1"></i> Checkout Selected Items
+                            </button>
+                            <a href="{{ route('user_dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                @else
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle me-1"></i>
+                        Your cart is empty. Please add some products to your cart.
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="{{ route('user_dashboard') }}" class="btn btn-primary">
+                            <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+                        </a>
+                    </div>
+                @endif
+            </form>
         </div>
-
-        <div style="text-align: center; margin-top: 20px;">
-            <button type="submit" style="padding: 10px 20px; background-color: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
-               Buy Products
-            </button>
-        </div>
-    </form>
-       <form action="{{ route('user_dashboard') }}"  class="back-button-form">
-           
-            <button type="submit">Back to Dashboard</button>
-        </form>
-
-</body>
-</html>
+    </div>
+</div>
+@endsection

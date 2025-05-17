@@ -1,135 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Grid</title>
+@extends('layout.app')
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-        }
+@section('content')
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4">
+        <span class="text-muted fw-light">Products /</span> Product List
+    </h4>
 
-        h1 {
-            text-align: center;
-            margin: 30px 0;
-            color: #333;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            width: 90%;
-            margin: auto;
-        }
-
-        .product-card {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .product-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        .product-name {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .product-price {
-            margin-top: 5px;
-            font-size: 18px;
-            color: #e74c3c;
-            font-weight: bold;
-        }
-
-        .product-actions {
-            margin-top: 10px;
-        }
-
-        .product-actions a {
-            display: inline-block;
-            margin: 5px;
-            padding: 6px 12px;
-            background-color: #3498db;
-            color: white;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .product-actions a:hover {
-            background-color: #2980b9;
-        }
-
-        /* Back button form styling */
-        .back-button-form {
-            margin: 40px auto;
-            text-align: center;
-        }
-
-        .back-button-form button {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .back-button-form button:hover {
-            background-color: #27ae60;
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
-<body>
-
-    <h1>Available Products</h1>
-
-    <div class="product-grid">
-        @foreach ($products as $pro)
-            <div class="product-card">
-                <img src="{{ asset('storage/products/'.$pro->image) }}" alt="Product Image">
-                <div class="product-price">Rs. {{ $pro->price }}</div>
-                <div class="product-name">{{ $pro->name }}</div>
-                <div class="product-actions">
-                    <a href="{{ route('deleteproduct', ['id' => $pro->id]) }}">Delete</a>
-                    <a href="{{ route('updateproduct', ['id' => $pro->id]) }}">Update</a>
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Available Products</h5>
+            <a href="{{ route('adding') }}" class="btn btn-primary">
+                <i class="bx bx-plus me-1"></i> Add New Product
+            </a>
+        </div>
+        <div class="card-body">
+            @if ($products->isEmpty())
+                <div class="alert alert-info" role="alert">
+                    <i class="bx bx-info-circle me-1"></i>
+                    No products available. Start by adding your first product.
                 </div>
+            @else
+                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+                    @foreach ($products as $pro)
+                        <div class="col">
+                            <div class="card h-100">
+                                <img class="card-img-top" src="{{ asset('storage/products/'.$pro->image) }}" alt="{{ $pro->name }}" style="height: 200px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $pro->name }}</h5>
+                                    <p class="card-text text-primary fw-semibold">Rs. {{ $pro->price }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between">
+                                        <a href="{{ route('updateproduct', ['id' => $pro->id]) }}" class="btn btn-sm btn-primary">
+                                            <i class="bx bx-edit-alt me-1"></i> Edit
+                                        </a>
+                                        <a href="{{ route('deleteproduct', ['id' => $pro->id]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">
+                                            <i class="bx bx-trash me-1"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+            
+            <div class="mt-4 text-end">
+                <a href="{{ route('admin_dashboard') }}" class="btn btn-secondary">
+                    <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+                </a>
             </div>
-        @endforeach
-
-        @if ($products->isEmpty())
-            <div class="product-card" style="grid-column: span 3; text-align: center;">
-                <p>No products available.</p>
-            </div>
-        @endif
+        </div>
     </div>
-
-    <form action="{{ route('admin_dashboard') }}" class="back-button-form">
-        <button type="submit">Back to Dashboard</button>
-    </form>
-
-</body>
-</html>
+</div>
+@endsection
