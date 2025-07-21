@@ -31,7 +31,7 @@ Route::delete('/deleteproduct/{id}', [addproductcontroller::class, 'destroy'])->
 
 Route::get('editproduct/{id}',[addproductcontroller::class,'editproduct'])->name("editproduct");
 
-Route::put('/updateproduct/{id}', [addproductcontroller::class, 'updateproduct'])->name('updateproduct');
+Route::post('/updateproduct', [addproductcontroller::class, 'update'])->name('updateproduct');
 
 Route::get('/products/search', [addproductcontroller::class, 'searchProducts'])->name('search.products');
 

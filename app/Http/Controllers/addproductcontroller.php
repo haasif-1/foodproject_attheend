@@ -84,41 +84,52 @@ public function destroy($id)
 }
 
 
+
 function editproduct($id){
     $product = product::find($id);
     return view('pages.updateproduct',['edit'=> $product ]);
 }
 
-public function updateproduct(Request $req, $id)
+public function update(Request $request)
 {
-    // Validate the request
-    $validated = $req->validate([
-        'name' => 'required|string|max:255',
-        'price' => 'required|numeric|min:0',
-    ]);
+    $product = Product::find($request->id);
+    $product->name = $request->name;
+    $product->price = $request->price;
+    $product->save();
 
-    // Find product
-    $product = Product::find($id);
-    if (!$product) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Product not found.'
-        ], 404);
+    $products = Product::all();
+
+    // Generate HTML for updated product list
+    $html = '';
+    foreach ($products as $pro) {
+        $html .= '
+        <div class="col">
+            <div class="card h-100">
+                <img class="card-img-top" src="' . asset('storage/products/' . $pro->image) . '" alt="' . e($pro->name) . '" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">' . e($pro->name) . '</h5>
+                    <p class="card-text text-primary fw-semibold">Rs. ' . e($pro->price) . '</p>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-sm btn-primary edit-btn" data-id="' . $pro->id . '" data-name="' . e($pro->name) . '" data-price="' . e($pro->price) . '">
+                            <i class="bx bx-edit-alt me-1"></i> Edit
+                        </button>
+                        <a href="javascript:void(0);" data-id="' . $pro->id . '" class="btn btn-sm btn-danger delete-btn">
+                            <i class="bx bx-trash me-1"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>';
     }
 
-    // Update product
-    $product->update([
-        'name' => $validated['name'],
-        'price' => $validated['price'],
-    ]);
-
-    // Return JSON response directly (no redirect)
     return response()->json([
-        'status' => 'success',
-        'message' => 'Product updated successfully.',
-        'data' => $product
+        'message' => 'Product updated successfully!',
+        'html' => $html
     ]);
 }
+
 
 
 public function searchProducts(Request $request)

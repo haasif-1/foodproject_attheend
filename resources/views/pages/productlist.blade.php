@@ -6,7 +6,6 @@
         <span class="text-muted fw-light">Products /</span> Product List
     </h4>
 
-
     <!-- Add Product Button -->
     <div class="mb-3">
         <button class="btn btn-primary" id="showAddProductForm">
@@ -21,12 +20,12 @@
             @csrf
             <div class="mb-3">
                 <label for="name" class="form-label">Product Name</label>
-                <input type="text" id="name"  name="name" class="form-control" required>
+                <input type="text" id="name" name="name" class="form-control" required>
             </div>
 
             <div class="mb-3">
                 <label for="price" class="form-label">Price (Rs.)</label>
-                <input type="number"  id="price" name="price" class="form-control" required>
+                <input type="number" id="price" name="price" class="form-control" required>
             </div>
 
             <div class="mb-3">
@@ -55,9 +54,9 @@
                             </div>
                             <div class="card-footer">
                                 <div class="d-flex justify-content-between">
-                                    <a href="{{ route('editproduct', ['id' => $pro->id]) }}" class="btn btn-sm btn-primary">
+                                    <button class="btn btn-sm btn-primary edit-btn" data-id="{{ $pro->id }}" data-name="{{ $pro->name }}" data-price="{{ $pro->price }}">
                                         <i class="bx bx-edit-alt me-1"></i> Edit
-                                    </a>
+                                    </button>
                                     <a href="javascript:void(0);" data-id="{{ $pro->id }}" class="btn btn-sm btn-danger delete-btn">
                                         <i class="bx bx-trash me-1"></i> Delete
                                     </a>
@@ -77,104 +76,121 @@
     </div>
 </div>
 
+<!-- Custom Edit Modal -->
+<div id="editOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; backdrop-filter:blur(5px); background-color:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div class="card p-4" style="max-width:400px; width:90%;">
+        <h5>Edit Product</h5>
+        <form id="editProductForm">
+            @csrf
+            <input type="hidden" id="edit_id" name="id">
+            <div class="mb-3">
+                <label for="edit_name" class="form-label">Product Name</label>
+                <input type="text" id="edit_name" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="edit_price" class="form-label">Price (Rs.)</label>
+                <input type="number" id="edit_price" name="price" class="form-control" required>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-success">Update</button>
+                <button type="button" class="btn btn-secondary" id="cancelEditProduct">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
 $(document).ready(function () {
-    // CSRF token setup
     $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
-   $('#showAddProductForm').click(function () {
-    $('#addProductForm').slideToggle();
-});
-    // Cancel form
-    $('#cancelAddProduct').click(function () {
+    $('#showAddProductForm').click(() => $('#addProductForm').slideToggle());
+    $('#cancelAddProduct').click(() => {
         $('#addProductForm').slideUp();
         $('#newProductForm')[0].reset();
     });
 
-    // Submit form via AJAX
-         $('#newProductForm').submit(function (e) {
-            e.preventDefault();
+    $('#cancelEditProduct').click(() => {
+        $('#editOverlay').fadeOut();
+        $('#editProductForm')[0].reset();
+    });
 
-            var name = $('#name').val();
-            var price = $('#price').val();
-            var img = document.getElementById("image").files[0];
+    // Add New Product
+    $('#newProductForm').submit(function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
 
-            if (!img) {
-                showCustomAlert("Please upload an image.", "error");
-                return;
+        $.ajax({
+            url: "{{ route('addproducts') }}",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                $('#addProductForm').slideUp();
+                $('#newProductForm')[0].reset();
+                $('#productList').html(response.html);
+                showCustomAlert(response.message, "success");
+            },
+            error: function (xhr) {
+                showCustomAlert("Error adding product", "error");
             }
-
-            var img_extension = img.name.split(".").pop().toLowerCase();
-            var allowed_extensions = ["jpg", "jpeg", "png"];
-
-            if ($.inArray(img_extension, allowed_extensions) === -1) {
-                showCustomAlert("Invalid image type. Only JPG, JPEG, and PNG are allowed.", "error");
-                return;
-            }
-
-            if (img.size > 1 * 1024 * 1024) {
-                showCustomAlert("Image size must be less than 1MB.", "error");
-                return;
-            }
-
-            var formData = new FormData();
-            formData.append('name', name);
-            formData.append('price', price);
-            formData.append('image', img);
-
-           $.ajax({
-    url: "{{ route('addproducts') }}",
-    type: "POST",
-    data: formData,
-    contentType: false,
-    processData: false,
-    cache: false,
-  success: function (response) {
-    $('#newProductForm')[0].reset();
-    showCustomAlert(response.message, "success");
-    $('#addProductForm').slideUp();
-    $('#productList').html(response.html);
-},
-    error: function (xhr) {
-        let errorMessage = 'Something went wrong.';
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-            errorMessage = xhr.responseJSON.message;
-        }
-
-        showCustomAlert(errorMessage, "error");
-    }
-});
-
         });
+    });
 
-    // Delete product
+    // Show Edit Form
+    $(document).on('click', '.edit-btn', function () {
+        let id = $(this).data('id');
+        let name = $(this).data('name');
+        let price = $(this).data('price');
+
+        $('#edit_id').val(id);
+        $('#edit_name').val(name);
+        $('#edit_price').val(price);
+         $('#editOverlay').css('display', 'flex').hide().fadeIn();
+    });
+
+    // Update Product
+    $('#editProductForm').submit(function (e) {
+        e.preventDefault();
+        let formData = $(this).serialize();
+
+        $.ajax({
+            url: "{{ route('updateproduct') }}", // Make sure this route exists
+            type: "POST",
+            data: formData,
+            success: function (res) {
+                $('#editOverlay').fadeOut();
+                $('#editProductForm')[0].reset();
+                $('#productList').html(res.html);
+                showCustomAlert(res.message, "success");
+            },
+            error: function () {
+                showCustomAlert("Update failed", "error");
+            }
+        });
+    });
+
+    // Delete Product
     $(document).on('click', '.delete-btn', function () {
         let id = $(this).data('id');
         let card = $(this).closest('.col');
 
-        showCustomConfirm("Are you sure you want to delete this product?", function () {
+        showCustomConfirm("Are you sure?", function () {
             $.ajax({
                 url: `/deleteproduct/${id}`,
                 type: 'DELETE',
                 success: function (res) {
                     if (res.status === 'success') {
-                        showCustomAlert("Product deleted successfully");
-                        card.fadeOut(400, function () {
-                            $(this).remove();
-                        });
+                        card.fadeOut(300, function () { $(this).remove(); });
+                        showCustomAlert("Deleted", "success");
                     } else {
-                        showCustomAlert("Failed to delete product", "error");
+                        showCustomAlert("Failed", "error");
                     }
-                },
-                error: function () {
-                    showCustomAlert("Server error occurred", "error");
                 }
             });
         });
@@ -185,13 +201,10 @@ $(document).ready(function () {
         let keyword = $(this).val();
         $.ajax({
             url: "{{ route('search.products') }}",
-            method: 'GET',
-            data: { keyword: keyword },
+            type: "GET",
+            data: { keyword },
             success: function (data) {
                 $('#productList').html(data);
-            },
-            error: function () {
-                showCustomAlert("Failed to fetch search results", "error");
             }
         });
     });
