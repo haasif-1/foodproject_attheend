@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\product;
 
@@ -45,6 +45,12 @@ public function destroy($id)
         return response()->json(['status' => 'error', 'message' => 'Product not found.']);
     }
 
+    // Delete the image using the 'public' disk
+    if ($product->image && Storage::disk('public')->exists('products/' . $product->image)) {
+        Storage::disk('public')->delete('products/' . $product->image);
+    }
+
+    // Delete the product from DB
     $product->delete();
 
     return response()->json(['status' => 'success', 'message' => 'Product deleted successfully.']);
