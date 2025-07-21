@@ -37,6 +37,7 @@
                                         <a href="{{ route('deleteproduct', ['id' => $pro->id]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">
                                             <i class="bx bx-trash me-1"></i> Delete
                                         </a>
+                                        
                                     </div>
                                 </div>
                             </div>

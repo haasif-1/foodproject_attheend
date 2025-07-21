@@ -16,19 +16,18 @@ public function addProduct(Request $req)
         'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
- $imagePath = $req->file('image')->store('products', 'public');
+    $imagePath = $req->file('image')->store('products', 'public');
+    $filename = basename($imagePath);
 
-$filename = basename($imagePath);
-
-    $product = product::firstOrCreate([
+    $product = Product::create([
         'name' => $validated['name'],
         'price' => $validated['price'],
         'image' => $filename,
     ]);
 
-return redirect()->route('showitem')
-                     ->with('success', 'Product added successfully');
+    return response()->json(['status' => 'success', 'message' => 'Product added successfully!']);
 }
+
 
 
 
