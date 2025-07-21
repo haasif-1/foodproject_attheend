@@ -8,25 +8,52 @@ use App\Models\product;
 class addproductcontroller extends Controller
 {
 
-public function addProduct(Request $req)
+public function addProduct(Request $request)
 {
-    $validated = $req->validate([
+    $validated = $request->validate([
         'name' => 'required|string|max:255',
-        'price' => 'required|numeric|min:0',
-        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'price' => 'required|numeric',
+        'image' => 'required|image|mimes:jpg,jpeg,png|max:1024',
     ]);
 
-    $imagePath = $req->file('image')->store('products', 'public');
-    $filename = basename($imagePath);
+    $imageName = time() . '.' . $request->image->extension();
+    $request->image->storeAs('public/products', $imageName);
 
-    $product = Product::create([
-        'name' => $validated['name'],
-        'price' => $validated['price'],
-        'image' => $filename,
+    Product::create([
+        'name' => $request->name,
+        'price' => $request->price,
+        'image' => $imageName,
     ]);
 
-    return response()->json(['status' => 'success', 'message' => 'Product added successfully!']);
+    $products = Product::latest()->get(); // or whatever your logic is
+
+    $html = '';
+    foreach ($products as $pro) {
+        $html .= '
+        <div class="col">
+            <div class="card h-100">
+                <img class="card-img-top" src="' . asset("storage/products/" . $pro->image) . '" alt="' . $pro->name . '" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">' . $pro->name . '</h5>
+                    <p class="card-text text-primary fw-semibold">Rs. ' . $pro->price . '</p>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a href="' . route('editproduct', ['id' => $pro->id]) . '" class="btn btn-sm btn-primary">
+                            <i class="bx bx-edit-alt me-1"></i> Edit
+                        </a>
+                        <a href="javascript:void(0);" data-id="' . $pro->id . '" class="btn btn-sm btn-danger delete-btn">
+                            <i class="bx bx-trash me-1"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>';
+    }
+
+    return response()->json(['status' => 'success', 'message' => 'Product added!', 'html' => $html]);
 }
+
 
 
 
