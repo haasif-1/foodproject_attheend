@@ -37,14 +37,19 @@ function showProducts(Request $req){
 
 }
 
-function deleteproduct($id){
-       $delete = product::destroy($id);
+public function destroy($id)
+{
+    $product = Product::find($id);
 
-       if($delete){
-        return  redirect()->route('showitem');
-       }
+    if (!$product) {
+        return response()->json(['status' => 'error', 'message' => 'Product not found.']);
+    }
 
+    $product->delete();
+
+    return response()->json(['status' => 'success', 'message' => 'Product deleted successfully.']);
 }
+
 
 function updateproduct($id){
     $product = product::find($id);

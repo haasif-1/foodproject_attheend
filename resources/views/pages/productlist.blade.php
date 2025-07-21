@@ -34,9 +34,10 @@
                                         <a href="{{ route('updateproduct', ['id' => $pro->id]) }}" class="btn btn-sm btn-primary">
                                             <i class="bx bx-edit-alt me-1"></i> Edit
                                         </a>
-                                        <a href="{{ route('deleteproduct', ['id' => $pro->id]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">
-                                            <i class="bx bx-trash me-1"></i> Delete
-                                        </a>
+                                       <a href="javascript:void(0);" data-id="{{ $pro->id }}" class="btn btn-sm btn-danger delete-btn">
+    <i class="bx bx-trash me-1"></i> Delete
+</a>
+
                                         
                                     </div>
                                 </div>
@@ -54,4 +55,48 @@
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // CSRF Token setup
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Delete click handler
+        $('.delete-btn').click(function () {
+            let id = $(this).data('id');
+            let card = $(this).closest('.col'); // 👈 This is the wrapper for the product card
+
+            showCustomConfirm("Are you sure you want to delete this product?", function () {
+                $.ajax({
+                    url: `/deleteproduct/${id}`,
+                    type: 'DELETE',
+                    success: function (res) {
+                        if (res.status === 'success') {
+                            showCustomAlert("Product deleted successfully");
+
+                            // 👇 Fade out and remove the product card
+                            card.fadeOut(400, function () {
+                                $(this).remove();
+                            });
+
+                        } else {
+                            showCustomAlert("Failed to delete product", "error");
+                        }
+                    },
+                    error: function () {
+                        showCustomAlert("Server error occurred", "error");
+                    }
+                });
+            });
+
+        });
+    });
+</script>
+
 @endsection
+

@@ -2,46 +2,6 @@
 
 @section('content')
 
-<style>
-/* Custom alert styling */
-.custom-alert {
-  display: none;
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #28a745;
-  color: white;
-  padding: 15px 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
-  z-index: 9999;
-  font-size: 16px;
-  animation: slideDown 0.5s ease forwards;
-}
-
-.custom-alert.error {
-  background-color: #dc3545;
-}
-
-.custom-alert .close-btn {
-  margin-left: 15px;
-  cursor: pointer;
-  font-weight: bold;
-  float: right;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-</style>
-
 <!-- Page Content -->
 <main>
     <div class="container-xxl flex-grow-1 container-p-y">
@@ -100,27 +60,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    // Alert function for success or error messages
-    function showCustomAlert(message, type = 'success') {
-        const alertBox = document.getElementById("customAlert");
-        const alertMsg = document.getElementById("alertMsg");
-
-        alertMsg.textContent = message;
-        alertBox.classList.remove("error");
-        if (type === 'error') {
-            alertBox.classList.add("error");
-        }
-
-        alertBox.style.display = "block";
-        setTimeout(() => {
-            alertBox.style.display = "none";
-        }, 4000);
-    }
-
-    // Hide alert
-    function hideCustomAlert() {
-        document.getElementById("customAlert").style.display = "none";
-    }
 
     // CSRF setup globally for AJAX
     $.ajaxSetup({

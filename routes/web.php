@@ -27,7 +27,7 @@ Route::post('addproducts',[addproductcontroller::class,'addProduct'])->name('add
 
 Route::get('showitem',[addproductcontroller::class,'showProducts'])->name('showitem');
 
-Route::get('deleteproduct/{id}',[addproductcontroller::class,'deleteproduct'])->name("deleteproduct");
+Route::delete('/deleteproduct/{id}', [addproductcontroller::class, 'destroy'])->name('deleteproduct');;
 
 Route::get('updateproduct/{id}',[addproductcontroller::class,'updateproduct'])->name("updateproduct");
 
