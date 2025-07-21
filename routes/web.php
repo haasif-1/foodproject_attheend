@@ -33,6 +33,9 @@ Route::get('editproduct/{id}',[addproductcontroller::class,'editproduct'])->name
 
 Route::put('/updateproduct/{id}', [addproductcontroller::class, 'updateproduct'])->name('updateproduct');
 
+Route::get('/products/search', [addproductcontroller::class, 'searchProducts'])->name('search.products');
+
+
 Route::get('userlist',[projectuserscontroller::class,'userlist'])->name('userlist');
 
 Route::get('deleteuser/{id}', [projectuserscontroller::class, 'deleteuser'])->name("deleteuser");

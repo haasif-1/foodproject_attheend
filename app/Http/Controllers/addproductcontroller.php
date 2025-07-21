@@ -94,8 +94,39 @@ public function updateproduct(Request $req, $id)
 }
 
 
+public function searchProducts(Request $request)
+{
+    $keyword = $request->keyword;
 
+    $products = Product::where('name', 'like', "%$keyword%")
+                ->orWhere('price', 'like', "%$keyword%")
+                ->get();
 
+    $html = '';
+    foreach ($products as $pro) {
+        $html .= '
+        <div class="col">
+            <div class="card h-100">
+                <img class="card-img-top" src="' . asset("storage/products/" . $pro->image) . '" alt="' . $pro->name . '" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">' . $pro->name . '</h5>
+                    <p class="card-text text-primary fw-semibold">Rs. ' . $pro->price . '</p>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a href="' . route('editproduct', ['id' => $pro->id]) . '" class="btn btn-sm btn-primary">
+                            <i class="bx bx-edit-alt me-1"></i> Edit
+                        </a>
+                        <a href="javascript:void(0);" data-id="' . $pro->id . '" class="btn btn-sm btn-danger delete-btn">
+                            <i class="bx bx-trash me-1"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>';
+    }
 
+    return response($html);
+}
 
 }

@@ -19,6 +19,7 @@
           type="text"
           class="form-control border-0 shadow-none"
           placeholder="Search..."
+          id="searchProduct"
           aria-label="Search..."
         />
       </div>
