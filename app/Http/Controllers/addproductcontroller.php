@@ -10,20 +10,22 @@ class addproductcontroller extends Controller
 
 public function addProduct(Request $request)
 {
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'price' => 'required|numeric',
-        'image' => 'required|image|mimes:jpg,jpeg,png|max:1024',
-    ]);
+  $validated = $request->validate([
+    'name' => 'required|string|max:255',
+    'price' => 'required|numeric',
+    'image' => 'required|image|mimes:jpg,jpeg,png|max:1024',
+]);
 
-    $imageName = time() . '.' . $request->image->extension();
-    $request->image->storeAs('public/products', $imageName);
+$imageName = time() . '.' . $request->image->extension();
 
-    Product::create([
-        'name' => $request->name,
-        'price' => $request->price,
-        'image' => $imageName,
-    ]);
+// ✅ Save in storage/app/public/products
+$request->image->storeAs('products', $imageName, 'public');
+
+Product::create([
+    'name' => $request->name,
+    'price' => $request->price,
+    'image' => $imageName,
+]);
 
     $products = Product::latest()->get(); // or whatever your logic is
 

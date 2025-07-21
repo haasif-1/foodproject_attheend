@@ -1,6 +1,26 @@
 @extends('layout.app')
 
 @section('content')
+
+<!-- Top Search Section -->
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="d-flex align-items-center border rounded px-3 py-1 bg-white shadow-sm">
+                <i class="bx bx-search fs-4 lh-0 me-2"></i>
+                <input
+                    type="text"
+                    class="form-control border-0 shadow-none p-0"
+                    placeholder="Search..."
+                    id="searchProduct"
+                    aria-label="Search..."
+                />
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Top Search Section -->
+
 <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4">
         <span class="text-muted fw-light">Products /</span> Product List
@@ -12,6 +32,7 @@
             <i class="bx bx-plus me-1"></i> Add New Product
         </button>
     </div>
+
 
     <!-- Hidden Add Product Form -->
     <div id="addProductForm" class="card p-3 mb-4" style="display: none;">

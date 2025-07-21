@@ -84,13 +84,6 @@
           </a>
         </li>
 
-        <li class="menu-item {{ request()->routeIs('adding') ? 'active' : '' }}">
-          <a href="{{ route('adding') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-plus-circle"></i>
-            <div>Add Products</div>
-          </a>
-        </li>
-
         <li class="menu-item {{ request()->routeIs('showitem') ? 'active' : '' }}">
           <a href="{{ route('showitem') }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-list-ul"></i>
