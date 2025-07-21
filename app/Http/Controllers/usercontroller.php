@@ -31,25 +31,25 @@ class usercontroller extends Controller
 
 }
 
-function addnewuser(Request $req){
-    $data= $req->validate([
-        'name' => 'required',
-        'email' => 'email | required',
-        'password' => 'required',
-    ]);
+// function addnewuser(Request $req){
+//     $data= $req->validate([
+//         'name' => 'required',
+//         'email' => 'email | required',
+//         'password' => 'required',
+//     ]);
 
-    $user = User::firstOrCreate(
-        ['email' => $data['email']],
-        ['name' => $data['name'],
-        'password' => bcrypt($data['password'])]
-    );
+//     $user = User::firstOrCreate(
+//         ['email' => $data['email']],
+//         ['name' => $data['name'],
+//         'password' => bcrypt($data['password'])]
+//     );
 
-    $role = Role::findById(2);
-    $user -> assignRole($role);
+//     $role = Role::findById(2);
+//     $user -> assignRole($role);
 
-    if($user){
-        return redirect()->route('admin_dashboard');
-    }
+//     if($user){
+//         return redirect()->route('admin_dashboard');
+//     }
 
-}
-}
+// }
+// }

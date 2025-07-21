@@ -57,25 +57,42 @@ public function destroy($id)
 }
 
 
-function updateproduct($id){
+function editproduct($id){
     $product = product::find($id);
     return view('pages.updateproduct',['edit'=> $product ]);
 }
 
-public function editproduct(Request $req, $id)
+public function updateproduct(Request $req, $id)
 {
+    // Validate the request
     $validated = $req->validate([
         'name' => 'required|string|max:255',
         'price' => 'required|numeric|min:0',
     ]);
-    $product = Product::findOrFail($id);
+
+    // Find product
+    $product = Product::find($id);
+    if (!$product) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Product not found.'
+        ], 404);
+    }
+
+    // Update product
     $product->update([
         'name' => $validated['name'],
         'price' => $validated['price'],
     ]);
-    return redirect()->route('showitem')
-                     ->with('success', 'Product updated successfully');
+
+    // Return JSON response directly (no redirect)
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Product updated successfully.',
+        'data' => $product
+    ]);
 }
+
 
 
 

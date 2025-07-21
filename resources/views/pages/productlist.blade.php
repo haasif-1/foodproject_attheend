@@ -31,7 +31,7 @@
                                 </div>
                                 <div class="card-footer">
                                     <div class="d-flex justify-content-between">
-                                        <a href="{{ route('updateproduct', ['id' => $pro->id]) }}" class="btn btn-sm btn-primary">
+                                        <a href="{{ route('editproduct', ['id' => $pro->id]) }}" class="btn btn-sm btn-primary">
                                             <i class="bx bx-edit-alt me-1"></i> Edit
                                         </a>
                                        <a href="javascript:void(0);" data-id="{{ $pro->id }}" class="btn btn-sm btn-danger delete-btn">

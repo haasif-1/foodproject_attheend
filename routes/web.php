@@ -19,7 +19,7 @@ Route::get('/login', function () {
 
 
 Route::post('registercontroller',[usercontroller::class,'register'])->name('registercontroller');
-Route::post('adduser',[usercontroller::class,'addnewuser'])->name('adduser');
+// Route::post('adduser',[usercontroller::class,'addnewuser'])->name('adduser');
 
 Route::post('logincontroller',[logincontroller::class,'login'])->name('logincontroller');
 
@@ -29,9 +29,9 @@ Route::get('showitem',[addproductcontroller::class,'showProducts'])->name('showi
 
 Route::delete('/deleteproduct/{id}', [addproductcontroller::class, 'destroy'])->name('deleteproduct');;
 
-Route::get('updateproduct/{id}',[addproductcontroller::class,'updateproduct'])->name("updateproduct");
+Route::get('editproduct/{id}',[addproductcontroller::class,'editproduct'])->name("editproduct");
 
-Route::put('editproduct/{id}',[addproductcontroller::class,'editproduct'])->name('editproduct');
+Route::put('/updateproduct/{id}', [addproductcontroller::class, 'updateproduct'])->name('updateproduct');
 
 Route::get('userlist',[projectuserscontroller::class,'userlist'])->name('userlist');
 
