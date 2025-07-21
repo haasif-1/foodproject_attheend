@@ -31,6 +31,7 @@ class usercontroller extends Controller
 
 }
 
+}
 // function addnewuser(Request $req){
 //     $data= $req->validate([
 //         'name' => 'required',

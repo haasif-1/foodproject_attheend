@@ -35,11 +35,12 @@ Route::put('/updateproduct/{id}', [addproductcontroller::class, 'updateproduct']
 
 Route::get('userlist',[projectuserscontroller::class,'userlist'])->name('userlist');
 
-Route::get('deleteuser/{id}',[projectuserscontroller::class,'deleteuser'])->name("deleteuser");
+Route::get('deleteuser/{id}', [projectuserscontroller::class, 'deleteuser'])->name("deleteuser");
 
-Route::get('updateuser/{id}',[projectuserscontroller::class,'updateuser'])->name("updateuser");
 
-Route::put('edituser/{id}',[projectuserscontroller::class,'edituser'])->name('edituser');
+Route::get('edituser/{id}',[projectuserscontroller::class,'edituser'])->name("edituser");
+
+Route::put('updateuser/{id}',[projectuserscontroller::class,'updateuser'])->name('updateuser');
 
 Route::post('userdatacheck',[projectuserscontroller::class,'datauser'])->name('userdatacheck');
 

@@ -11,14 +11,14 @@
             <div class="card mb-4">
                 <h5 class="card-header">Edit User Information</h5>
                 <div class="card-body">
-                    <form action="{{ route('edituser', $edit->id) }}" method="post">
-                        <input type="hidden" name="_method" value="PUT">
+                    <form id="upd_form">
                         @csrf
+                        <input type="hidden" name="id" value="{{ $edit->id }}">
 
                         <div class="mb-3 row">
                             <label for="id" class="col-md-2 col-form-label">User ID</label>
                             <div class="col-md-10">
-                                <input type="text" class="form-control-plaintext" id="id" name="id" value="{{ $edit->id }}" readonly>
+                                <input type="text" class="form-control-plaintext" value="{{ $edit->id }}" readonly>
                             </div>
                         </div>
 
@@ -36,7 +36,6 @@
                                 <span class="input-group-text"><i class="bx bx-envelope"></i></span>
                                 <input type="email" class="form-control" id="email" name="email" value="{{ $edit->email }}" placeholder="Enter user's email address" required>
                             </div>
-                            <div class="form-text">User will use this email to login to their account</div>
                         </div>
 
                         <div class="row mt-4">
@@ -55,4 +54,44 @@
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+     $('#upd_form').submit(function(e) {
+    e.preventDefault();
+
+    let id = $('input[name="id"]').val();
+    let name = $('#name').val();
+    let email = $('#email').val();
+
+    $.ajax({
+        url: "{{ route('updateuser', ['id' => '__id__']) }}".replace('__id__', id),
+        type: "POST",
+        data: {
+            _method: 'PUT',
+            name: name,
+            email: email
+        },
+        success: function(response) {
+            showCustomAlert('User updated successfully!');
+        },
+        error: function(xhr) {
+            let errorMessage = 'Something went wrong.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+            showCustomAlert(errorMessage);
+        }
+    });
+});
+    });
+</script>
 @endsection

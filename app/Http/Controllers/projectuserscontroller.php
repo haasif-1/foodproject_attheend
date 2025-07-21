@@ -20,13 +20,18 @@ class projectuserscontroller extends Controller
     return view('pages.userlist', compact('agents'));
 }
 
-function deleteuser($id){
-       $user = User::destroy($id);
-
-return redirect()->route('userlist');
+public function deleteuser($id)
+{
+    $user = User::find($id);
+    if ($user) {
+        $user->delete();
+        return response()->json(['status' => 'success']);
+    }
+    return response()->json(['status' => 'error']);
 }
 
-function  updateuser($id){
+
+function  edituser($id){
     $user = User::find($id);
     return view('pages.updateuser',['edit'=> $user ]);
 
@@ -87,19 +92,18 @@ public function edituserinfo(Request $req, $id)
 }
 
 
-public function edituser(Request $req, $id)
+public function updateuser(Request $request, $id)
 {
-    $validated = $req->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email',
-    ]);
-    $user = user::findOrFail($id);
-    $user->update([
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-    ]);
-    return redirect()->route('userlist')
-                     ->with('success', 'Product updated successfully');
+    $user = User::find($id);
+    if ($user) {
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->save();
+        return response()->json(['status' => 'success', 'message' => 'User updated successfully.']);
+    }
+
+    return response()->json(['status' => 'error', 'message' => 'User not found.'], 404);
 }
+
 
     }

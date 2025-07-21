@@ -7,12 +7,6 @@
     </h4>
 
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">User List</h5>
-            <a href="{{ route('register') }}" class="btn btn-primary">
-                <i class="bx bx-user-plus me-1"></i> Add New User
-            </a>
-        </div>
         
         <div class="card-body">
             <div class="table-responsive text-nowrap">
@@ -37,11 +31,12 @@
                                         <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="{{ route('updateuser', ['id' => $agent->id]) }}">
+                                        <a class="dropdown-item" href="{{ route('edituser', ['id' => $agent->id]) }}">
                                             <i class="bx bx-edit-alt me-1"></i> Edit
                                         </a>
-                                        <a class="dropdown-item" href="{{ route('deleteuser', ['id' => $agent->id]) }}" 
-                                           onclick="return confirm('Are you sure you want to delete this user?')">
+                                        <a href="javascript:void(0);" 
+                                           class="dropdown-item delete-btn" 
+                                           data-id="{{ $agent->id }}">
                                             <i class="bx bx-trash me-1"></i> Delete
                                         </a>
                                     </div>
@@ -70,4 +65,46 @@
         </div>
     </div>
 </div>
+
+<!-- CSRF Meta (should already be in layout) -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- User Delete Script -->
+<script>
+    $(document).ready(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $('.delete-btn').click(function () {
+            let id = $(this).data('id');
+            let row = $(this).closest('tr');
+
+             showCustomConfirm("Are you sure you want to delete this product?", function () {
+                $.ajax({
+                    url: `/deleteuser/${id}`,
+                    type: 'GET',
+                    success: function (res) {
+                        if (res.status === 'success') {
+                            showCustomAlert("User deleted successfully");
+                            row.fadeOut(300, function () {
+                                $(this).remove();
+                            });
+                        } else {
+                            showCustomAlert("Failed to delete user");
+                        }
+                    },
+                    error: function () {
+                        showCustomAlert("Server error occurred");
+                    }
+                });
+             });
+        });
+    });
+</script>
 @endsection
