@@ -126,12 +126,15 @@
                 url: '/user/update/' + id,
                 method: 'POST',
                 data: formData,
-                success: function (res) {
-                    if (res.status === 'success') {
-                        $('#updateModal').fadeOut();
-                        location.reload();
-                    }
-                },
+             success: function (res) {
+    if (res.status === 'success') {
+        $('#updateModal').fadeOut();
+        $('p:contains("Name:")').html('<strong>Name:</strong> ' + res.updated_user.name);
+        $('p:contains("Email:")').html('<strong>Email:</strong> ' + res.updated_user.email);
+
+        showCustomAlert("Profile updated successfully!");
+    }
+},
                 error: function () {
                     showCustomAlert('Update failed. Please try again.');
                 }

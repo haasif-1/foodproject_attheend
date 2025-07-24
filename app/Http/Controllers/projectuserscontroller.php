@@ -86,24 +86,12 @@ public function updateUserInfo(Request $request, $id)
         'email' => $request->email,
     ]);
 
-    $html = '
-        <tr>
-            <td>' . e($user->name) . '</td>
-            <td>' . e($user->email) . '</td>
-            <td>
-                <a href="#" class="btn btn-sm btn-primary" id="editBtn" data-id="' . $user->id . '">
-                    <i class="bx bx-edit-alt me-1"></i> UpdateData
-                </a>
-                <a href="#" class="btn btn-sm btn-warning" id="changePasswordBtn" data-id="' . $user->id . '">
-                    <i class="bx bx-lock-alt me-1"></i> Change Password
-                </a>
-            </td>
-        </tr>
-    ';
-
     return response()->json([
         'status' => 'success',
-        'html' => $html,
+        'updated_user' => [
+            'name' => $user->name,
+            'email' => $user->email,
+        ]
     ]);
 }
 
