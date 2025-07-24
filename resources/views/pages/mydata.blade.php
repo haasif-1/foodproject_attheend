@@ -1,62 +1,35 @@
 @extends('layout.app')
 
 @section('content')
+
+
 <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4">
-        <span class="text-muted fw-light">Account /</span> My Profile
+        <span class="text-muted fw-light">User /</span> Profile
     </h4>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card mb-4">
-                <h5 class="card-header">My Personal Information</h5>
+    <div class="card p-4">
+        <h5 class="mb-3">Your Profile</h5>
+        <p><strong>Name:</strong> {{ $data->name }}</p>
+        <p><strong>Email:</strong> {{ $data->email }}</p>
 
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="profile-table-body">
-                                <tr>
-                                    <td>{{ $data->name }}</td>
-                                    <td>{{ $data->email }}</td>
-                                    <td>
-                                        <a href="#" class="btn btn-sm btn-primary" id="editBtn" data-id="{{ $data->id }}">
-                                            <i class="bx bx-edit-alt me-1"></i> UpdateData
-                                        </a>
-                                        <a href="#" class="btn btn-sm btn-warning" id="changePasswordBtn" data-id="{{ $data->id }}">
-                                            <i class="bx bx-lock-alt me-1"></i> Change Password
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="text-end">
-                    <a href="{{ route('user_dashboard') }}" class="btn btn-secondary">
-                        <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
-                    </a>
-                </div>
-            </div>
-        </div>
+        <button id="editBtn" class="btn btn-primary mt-2" data-id="{{ $data->id }}">
+            <i class="bx bx-edit-alt me-1"></i> Edit Info
+        </button>
+        <button id="changePasswordBtn" class="btn btn-warning mt-2" data-id="{{ $data->id }}">
+            <i class="bx bx-lock-alt me-1"></i> Change Password
+        </button>
     </div>
 </div>
 
-<!-- Edit Modal -->
-<div id="updateModal" class="modal-blur" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; backdrop-filter:blur(5px); background-color:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+<!-- ================== Update Info Modal ================== -->
+<div id="updateModal" class="modal-blur">
     <div class="card p-4" style="max-width:400px; width:90%;">
-        <h5 class="mb-4">Edit Your Information</h5>
+        <h5 class="mb-4">Edit Profile</h5>
         <form id="updateForm">
             @csrf
             @method('PUT')
-            <input type="hidden" name="id" id="user_id">
+            <input type="hidden" name="id" id="user_id" value="{{ $data->id }}">
 
             <div class="mb-3">
                 <label for="nameField" class="form-label">Full Name</label>
@@ -69,36 +42,34 @@
             </div>
 
             <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="submit" class="btn btn-primary">Save</button>
                 <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
             </div>
         </form>
     </div>
 </div>
 
-
-<!-- Change Password Modal -->
-<div id="passwordModal" class="modal-blur" style="display:none">
-    <div class="modal-content">
+<!-- ================== Change Password Modal ================== -->
+<div id="passwordModal" class="modal-blur">
+    <div class="card p-4" style="max-width:400px; width:90%;">
+        <h5 class="mb-4">Change Password</h5>
         <form id="passwordForm">
             @csrf
             @method('PUT')
-            <input type="hidden" name="id" id="password_user_id">
-
-            <h5 class="mb-4">Change Your Password</h5>
+            <input type="hidden" name="id" id="password_user_id" value="{{ $data->id }}">
 
             <div class="mb-3">
-                <label>New Password</label>
+                <label for="newPasswordField" class="form-label">New Password</label>
                 <input type="password" class="form-control" name="new_password" id="newPasswordField" required>
             </div>
 
             <div class="mb-3">
-                <label>Confirm New Password</label>
+                <label for="confirmPasswordField" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" name="new_password_confirmation" id="confirmPasswordField" required>
             </div>
 
-            <div class="text-end">
-                <button type="submit" class="btn btn-primary">Update Password</button>
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">Update</button>
                 <button type="button" id="cancelPasswordBtn" class="btn btn-secondary">Cancel</button>
             </div>
         </form>
@@ -111,74 +82,81 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <script>
-    // CSRF token setup
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
     $(document).ready(function () {
-        // Edit user button click
-        $(document).on('click', '#editBtn', function (e) {
+        // Hide modal on click outside card
+        $('.modal-blur').on('click', function (e) {
+            if ($(e.target).closest('.card').length === 0) {
+                $(this).fadeOut();
+            }
+        });
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Open Edit Modal
+        $('#editBtn').on('click', function (e) {
             e.preventDefault();
             const userId = $(this).data('id');
 
             $.ajax({
                 url: '/user/edit/' + userId,
-                type: 'GET',
+                method: 'GET',
                 success: function (res) {
                     $('#user_id').val(res.id);
                     $('#nameField').val(res.name);
                     $('#emailField').val(res.email);
-                    $('#updateModal').fadeIn();
+                    $('#updateModal').css('display', 'flex').hide().fadeIn();
+                },
+                error: function () {
+                    showCustomAlert('Failed to fetch user info');
                 }
             });
         });
 
-        // Submit edit form
-        $('#updateForm').submit(function (e) {
+        // Submit Update Info
+        $('#updateForm').on('submit', function (e) {
             e.preventDefault();
             const id = $('#user_id').val();
             const formData = $(this).serialize();
 
             $.ajax({
                 url: '/user/update/' + id,
-                type: 'POST',
+                method: 'POST',
                 data: formData,
                 success: function (res) {
                     if (res.status === 'success') {
                         $('#updateModal').fadeOut();
-                        $('#profile-table-body').html(res.html);
-                        showCustomAlert("Updated successfully!");
+                        location.reload();
                     }
                 },
                 error: function () {
-                    alert('Update failed');
+                    showCustomAlert('Update failed. Please try again.');
                 }
             });
         });
 
-        // Cancel edit modal
-        $('#cancelBtn').click(function () {
+        $('#cancelBtn').on('click', function () {
             $('#updateModal').fadeOut();
         });
 
-        // Open change password modal
-        $(document).on('click', '#changePasswordBtn', function (e) {
+        // Open Change Password Modal
+        $('#changePasswordBtn').on('click', function (e) {
             e.preventDefault();
             const userId = $(this).data('id');
             $('#password_user_id').val(userId);
-            $('#passwordModal').fadeIn();
+            $('#passwordForm')[0].reset();
+            $('#passwordModal').css('display', 'flex').hide().fadeIn();
         });
 
-        // Cancel password modal
-        $('#cancelPasswordBtn').click(function () {
+        $('#cancelPasswordBtn').on('click', function () {
             $('#passwordModal').fadeOut();
         });
 
-        // Submit password form
-        $('#passwordForm').submit(function (e) {
+        // Submit Password Change
+        $('#passwordForm').on('submit', function (e) {
             e.preventDefault();
 
             const password = $('#newPasswordField').val();
@@ -199,18 +177,18 @@
                 success: function (res) {
                     if (res.status === 'success') {
                         $('#passwordModal').fadeOut();
-                        showCustomAlert('Password updated successfully!');
+                        showCustomAlert('Password changed successfully!');
                     }
                 },
-              error: function (xhr) {
-    if (xhr.status === 422) {
-        const errors = xhr.responseJSON.errors;
-        let msg = Object.values(errors).join('\n');
-        showCustomAlert(msg);
-    } else {
-        showCustomAlert('Something went wrong.');
-    }
-}
+                error: function (xhr) {
+                    if (xhr.status === 422) {
+                        const errors = xhr.responseJSON.errors;
+                        let msg = Object.values(errors).join('\n');
+                        showCustomAlert(msg);
+                    } else {
+                        showCustomAlert('Something went wrong while changing password.');
+                    }
+                }
             });
         });
     });
