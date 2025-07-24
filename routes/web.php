@@ -59,8 +59,6 @@ Route::get('showallproducts',[assignproduct::class,'showproducts'])->name('showa
 
 Route::post('saveafterselect', [addtocartcontroller::class, 'addtocart'])->name('saveafterselect');
 
-Route::post('buyingprocess',[assignproduct::class,'buy_function'])->name('buyingprocess');
-
 Route::post('placeorder',[assignproduct::class,'placeorder_function'])->name('placeorder');
 
 Route::get('cartedproduct',[addtocartcontroller::class,'showcart'])->name('cartedproduct');

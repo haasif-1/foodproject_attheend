@@ -17,23 +17,6 @@ function showproducts(){
     return view("pages.allproducts",compact("products"));
 }
 
-
-
-public function buy_function(Request $request)
-{
-
-    $productIds = $request->input('products');
-
-    if (!$productIds) {
-        return redirect()->back()->with('error', 'Please select at least one product.');
-    }
-
-    $products = Product::whereIn('id', $productIds)->get();
-
-    return view('pages.ordercheckout', compact('products', 'productIds'));
-}
-
-
 public function placeorder_function(Request $request)
 {
     $request->validate([
@@ -76,8 +59,8 @@ order::create([
      'amount'      => $totalAmount,
 ]);
 
+return response()->json(['success' => true, 'message' => 'Order placed successfully!']);
 
-    return redirect()->route('cartedproduct')->with('success', 'Order placed successfully!');
 }
 
 
