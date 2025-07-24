@@ -86,12 +86,6 @@ public function destroy($id)
 }
 
 
-
-function editproduct($id){
-    $product = product::find($id);
-    return view('pages.updateproduct',['edit'=> $product ]);
-}
-
 public function update(Request $request)
 {
     $product = Product::find($request->id);

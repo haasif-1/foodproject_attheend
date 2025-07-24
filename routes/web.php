@@ -19,7 +19,6 @@ Route::get('/login', function () {
 
 
 Route::post('registercontroller',[usercontroller::class,'register'])->name('registercontroller');
-// Route::post('adduser',[usercontroller::class,'addnewuser'])->name('adduser');
 
 Route::post('logincontroller',[logincontroller::class,'login'])->name('logincontroller');
 
@@ -41,9 +40,9 @@ Route::get('userlist',[projectuserscontroller::class,'userlist'])->name('userlis
 Route::get('deleteuser/{id}', [projectuserscontroller::class, 'deleteuser'])->name("deleteuser");
 
 
-Route::get('edituser/{id}',[projectuserscontroller::class,'edituser'])->name("edituser");
+// Route::get('edituser/{id}',[projectuserscontroller::class,'edituser'])->name("edituser");
 
-Route::put('updateuser/{id}',[projectuserscontroller::class,'updateuser'])->name('updateuser');
+// Route::put('updateuser/{id}',[projectuserscontroller::class,'updateuser'])->name('updateuser');
 
 Route::post('userdatacheck',[projectuserscontroller::class,'datauser'])->name('userdatacheck');
 
@@ -67,9 +66,6 @@ Route::get('orderedproduct',[assignproduct::class,'myOrders'])->name('orderedpro
 
 Route::get('orderslist',[assignproduct::class,'adminview_orders'])->name('orderslist');
 
-Route::get('adding', function () {
-    return view('pages.addproduct');
-})->name("adding");
 
 Route::get('admin', function () {
     return view('pages.adminpage');
@@ -78,10 +74,6 @@ Route::get('admin', function () {
 
 Route::get('user_dashboard',[logincontroller::class,'userHome'])->name('user_dashboard');
 
-
-Route::get('register', function () {
-    return view('pages.addnewuser');
-})->name("register");
 
 
 

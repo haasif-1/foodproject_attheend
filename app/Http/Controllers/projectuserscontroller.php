@@ -34,12 +34,12 @@ public function deleteuser($id)
 }
 
 
-function  edituser($id){
-    $user = User::find($id);
-    return view('pages.updateuser',['edit'=> $user ]);
+// function  edituser($id){
+//     $user = User::find($id);
+//     return view('pages.updateuser',['edit'=> $user ]);
 
 
-}
+// }
 
 function  datauser(){
 
@@ -96,18 +96,18 @@ public function updateUserInfo(Request $request, $id)
 }
 
 
-public function updateuser(Request $request, $id)
-{
-    $user = User::find($id);
-    if ($user) {
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->save();
-        return response()->json(['status' => 'success', 'message' => 'User updated successfully.']);
-    }
+// public function updateuser(Request $request, $id)
+// {
+//     $user = User::find($id);
+//     if ($user) {
+//         $user->name = $request->name;
+//         $user->email = $request->email;
+//         $user->save();
+//         return response()->json(['status' => 'success', 'message' => 'User updated successfully.']);
+//     }
 
-    return response()->json(['status' => 'error', 'message' => 'User not found.'], 404);
-}
+//     return response()->json(['status' => 'error', 'message' => 'User not found.'], 404);
+// }
 
 
     }

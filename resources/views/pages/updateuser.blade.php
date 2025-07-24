@@ -1,4 +1,4 @@
-@extends('layout.app')
+{{-- @extends('layout.app')
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -94,4 +94,4 @@
 });
     });
 </script>
-@endsection
+@endsection --}}
