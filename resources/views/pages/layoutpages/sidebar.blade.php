@@ -130,17 +130,6 @@
           </form>
         </li>
 
-        <li class="menu-item">
-          <form action="{{ route('changeuserpassword') }}" method="post" class="menu-link py-2">
-            @csrf
-            <div class="d-grid gap-2 px-3">
-              <button type="submit" class="btn btn-warning btn-sm">
-                <i class="bx bx-lock-alt me-1"></i> Change Password
-              </button>
-            </div>
-          </form>
-        </li>
-
         <!-- Shopping -->
         <li class="menu-header small text-uppercase">
           <span class="menu-header-text">Shopping</span>

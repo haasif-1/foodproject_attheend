@@ -47,13 +47,11 @@ Route::put('updateuser/{id}',[projectuserscontroller::class,'updateuser'])->name
 
 Route::post('userdatacheck',[projectuserscontroller::class,'datauser'])->name('userdatacheck');
 
-Route::post('changeuserpassword',[projectuserscontroller::class,'changepassword'])->name('changeuserpassword');
+Route::put('/user/change-password/{id}', [projectuserscontroller::class, 'changePassword'])->name('user.changePassword');
 
-Route::post('changedone/{id}',[projectuserscontroller::class,'savenewpass'])->name('changedone');
+Route::get('/user/edit/{id}', [projectuserscontroller::class, 'showEditForm'])->name('user.edit.form');
 
-Route::get('updateuserdata',[projectuserscontroller::class,'updatauserinfo'])->name('updateuserdata');
-
-Route::put('editmyselfdata/{id}',[projectuserscontroller::class,'edituserinfo'])->name('editmyselfdata');
+Route::put('/user/update/{id}', [projectuserscontroller::class, 'updateUserInfo'])->name('user.update');
 
 Route::get('showallproducts',[assignproduct::class,'showproducts'])->name('showallproducts');
 
@@ -68,9 +66,6 @@ Route::delete('/orders/{id}', [assignproduct::class, 'destroy'])->name('orders.d
 Route::get('orderedproduct',[assignproduct::class,'myOrders'])->name('orderedproduct');
 
 Route::get('orderslist',[assignproduct::class,'adminview_orders'])->name('orderslist');
-
-
-
 
 Route::get('adding', function () {
     return view('pages.addproduct');

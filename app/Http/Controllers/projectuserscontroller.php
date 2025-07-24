@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 
 use Illuminate\Http\Request;
@@ -45,50 +48,63 @@ function  datauser(){
 
 }
 
-function  changepassword(){
-
-    $user = Auth::user();
-return view('pages.changepassword',["data"=>$user]);
-
-}
-
-function  savenewpass(Request $req,$id){
-
-    $data= $req->validate([
-        'password' => 'required',
-    ]);
-    $user = user::findOrFail($id);
-    $user->update([
-
-        'password' => $data['password'],
-
-    ]);
-
-    $user = Auth::user();
-    return view('pages.userpage',["data"=>$user]);
-
-}
-
-function updatauserinfo(){
-
-    $user = Auth::user();
-    return  view('pages.updatemyselfdata',["edit"=>$user]);
-
-}
-
-public function edituserinfo(Request $req, $id)
+public function changePassword(Request $request, $id)
 {
-    $validated = $req->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email',
+    $request->validate([
+        'new_password' => 'required|min:3|confirmed',
     ]);
 
-    $user = user::findOrFail($id);
-    $user->update([
-        'name' => $validated['name'],
-        'email' => $validated['email'],
+    $user = User::findOrFail($id);
+    $user->password = bcrypt($request->new_password);
+    $user->save();
+
+    return response()->json(['status' => 'success']);
+}
+
+
+public function showEditForm($id)
+{
+    $user = User::findOrFail($id);
+
+    return response()->json([
+        'id' => $user->id,
+        'name' => $user->name,
+        'email' => $user->email,
     ]);
-    return view('pages.userpage',["data"=>$user]);
+}
+
+public function updateUserInfo(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,' . $id,
+    ]);
+
+    $user = User::findOrFail($id);
+    $user->update([
+        'name' => $request->name,
+        'email' => $request->email,
+    ]);
+
+    $html = '
+        <tr>
+            <td>' . e($user->name) . '</td>
+            <td>' . e($user->email) . '</td>
+            <td>
+                <a href="#" class="btn btn-sm btn-primary" id="editBtn" data-id="' . $user->id . '">
+                    <i class="bx bx-edit-alt me-1"></i> UpdateData
+                </a>
+                <a href="#" class="btn btn-sm btn-warning" id="changePasswordBtn" data-id="' . $user->id . '">
+                    <i class="bx bx-lock-alt me-1"></i> Change Password
+                </a>
+            </td>
+        </tr>
+    ';
+
+    return response()->json([
+        'status' => 'success',
+        'html' => $html,
+    ]);
 }
 
 
