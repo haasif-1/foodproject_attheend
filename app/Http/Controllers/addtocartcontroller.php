@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
  use App\Models\cart;
  use App\Models\product;
+use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,14 +13,17 @@ use Illuminate\Http\Request;
 class addtocartcontroller extends Controller
 {
 
-function addtocart(Request $request){
+public function addtocart(Request $request)
+{
+    $productIds = $request->input('products'); // array
+
+    if ($productIds) {
         $user = Auth::user();
+        $user->cartProducts()->syncWithoutDetaching($productIds); // Many-to-many
+        return response()->json(['message' => 'Products added']);
+    }
 
-        $productIds = $request->input('products', []);
-
-        $user->cartProducts()->syncWithoutDetaching($productIds);
-
-        return back()->with('success', 'Products added to cart successfully!');
+    return response()->json(['message' => 'No products selected'], 400);
 }
 
 

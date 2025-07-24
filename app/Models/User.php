@@ -27,9 +27,10 @@ class User extends Authenticatable
     ];
 
 
+
 public function cartProducts()
 {
-    return $this->belongsToMany(product::class,'product_user');
+    return $this->belongsToMany(Product::class, 'product_user', 'user_id', 'product_id');
 }
 
     /**

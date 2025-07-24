@@ -57,7 +57,7 @@ Route::put('editmyselfdata/{id}',[projectuserscontroller::class,'edituserinfo'])
 
 Route::get('showallproducts',[assignproduct::class,'showproducts'])->name('showallproducts');
 
-Route::post('saveafterselect',[addtocartcontroller::class,'addtocart'])->name('saveafterselect');
+Route::post('saveafterselect', [addtocartcontroller::class, 'addtocart'])->name('saveafterselect');
 
 Route::post('buyingprocess',[assignproduct::class,'buy_function'])->name('buyingprocess');
 
