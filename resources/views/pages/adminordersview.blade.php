@@ -12,7 +12,7 @@
         </div>
     @else
         @foreach($orders as $order)
-            <div class="card mb-4">
+            <div class="card mb-4 order-card" data-id="{{ $order->id }}">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Order #{{ $order->id }}</h5>
@@ -59,6 +59,13 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Cancel Button (Bottom Right) -->
+                    <div class="d-flex justify-content-end mt-4">
+                        <button class="btn btn-outline-danger cancel-order-btn">
+                            <i class="bx bx-x-circle me-1"></i> Cancel Order
+                        </button>
+                    </div>
                 </div>
             </div>
         @endforeach
@@ -70,4 +77,42 @@
         </a>
     </div>
 </div>
+
+
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('.cancel-order-btn').click(function () {
+            let card = $(this).closest('.order-card');
+            let orderId = card.data('id');
+
+            showCustomConfirm("Are you sure you want to cancel this order?", function () {
+                $.ajax({
+                    url: `/orders/${orderId}`,
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        // Remove card from DOM
+                        card.fadeOut(300, function () {
+                            $(this).remove();
+                        });
+
+                        // Optional: show a message
+                        showCustomAlert(response.message);
+                    },
+                    error: function (xhr) {
+                        showCustomAlert(xhr.responseJSON.message || "Something went wrong.");
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+@endpush
+
 @endsection
+
+

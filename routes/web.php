@@ -65,6 +65,8 @@ Route::post('placeorder',[assignproduct::class,'placeorder_function'])->name('pl
 
 Route::get('cartedproduct',[addtocartcontroller::class,'showcart'])->name('cartedproduct');
 
+Route::delete('/orders/{id}', [assignproduct::class, 'destroy'])->name('orders.destroy');
+
 Route::get('orderedproduct',[assignproduct::class,'myOrders'])->name('orderedproduct');
 
 Route::get('orderslist',[assignproduct::class,'adminview_orders'])->name('orderslist');

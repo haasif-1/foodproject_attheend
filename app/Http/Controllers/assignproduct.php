@@ -116,7 +116,18 @@ foreach ($orders as $order) {
 }
 
 
+public function destroy($id)
+{
+    $order = Order::find($id);
 
+    if (!$order) {
+        return response()->json(['message' => 'Order not found.'], 404);
+    }
+
+    $order->delete();
+
+    return response()->json(['message' => 'Order cancelled successfully.']);
+}
 
   
     

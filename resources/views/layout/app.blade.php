@@ -188,5 +188,7 @@
       document.getElementById("customConfirm").style.display = "none";
     }
   </script>
+  @stack('scripts')
+
 </body>
 </html>
