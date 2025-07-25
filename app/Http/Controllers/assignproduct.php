@@ -96,15 +96,18 @@ public function adminview_orders()
     return view('pages.adminordersview', compact('orders'));
 }
 
-// Confirm
 public function confirmOrder($id)
 {
     $order = Order::findOrFail($id);
     $order->status = 'confirmed';
     $order->save();
 
-    return response()->json(['message' => 'Order confirmed']);
+    return response()->json([
+        'message' => 'Order confirmed successfully.',
+        'status' => $order->status,
+    ]);
 }
+
 
 // Cancel
 public function cancelOrder($id)
@@ -114,8 +117,12 @@ public function cancelOrder($id)
     $order->cancelled_at = now();
     $order->save();
 
-    return response()->json(['message' => 'Order cancelled and will be deleted in 24 hours']);
+    return response()->json([
+        'message' => 'Order cancelled. It will be deleted in 24 hours.',
+        'status' => $order->status,
+    ]);
 }
+
 
 
 public function destroy($id)

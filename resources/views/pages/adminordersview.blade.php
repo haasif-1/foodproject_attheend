@@ -12,47 +12,41 @@
         </div>
     @else
         @foreach($orders as $order)
+            @php
+                $badgeClass = match($order->status) {
+                    'confirmed' => 'bg-success',
+                    'cancelled' => 'bg-danger',
+                    default => 'bg-label-info'
+                };
+            @endphp
+
             <div class="card mb-4 order-card" data-id="{{ $order->id }}">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Order #{{ $order->id }}</h5>
-                        <span class="badge bg-label-success me-1">Total: Rs. {{ number_format($order->amount) }}</span>
+                        <div>
+                            <span class="badge bg-label-success me-2">Total: Rs. {{ number_format($order->amount) }}</span>
+                            <span class="badge {{ $badgeClass }} order-status-badge">
+                                {{ ucfirst($order->status ?? 'Pending') }}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                  {{-- 🟢 Status Message --}}
-            @if ($order->status === 'confirmed')
-                <div class="alert alert-success m-3 mb-0">
-                    ✅ Your order has been <strong>confirmed</strong> by the admin.
-                </div>
-            @elseif ($order->status === 'cancelled')
-                <div class="alert alert-danger m-3 mb-0">
-                    ❌ Your order was <strong>cancelled</strong> by the admin.
-                </div>
-            @endif
                 <div class="card-body">
                     <div class="row g-4">
-                        <!-- Left Side: Order Details -->
                         <div class="col-md-5">
                             <h6 class="fw-semibold mb-3">Customer Information</h6>
                             <ul class="list-unstyled mb-4">
-                                <li class="mb-2">
-                                    <span class="fw-medium">Name:</span> {{ $order->user_name }}
-                                </li>
-                                <li class="mb-2">
-                                    <span class="fw-medium">Email:</span> {{ $order->email }}
-                                </li>
-                                <li class="mb-2">
-                                    <span class="fw-medium">Phone:</span> {{ $order->phone }}
-                                </li>
-                                <li class="mb-2">
-                                    <span class="fw-medium">Address:</span> 
+                                <li class="mb-2"><span class="fw-medium">Name:</span> {{ $order->user_name }}</li>
+                                <li class="mb-2"><span class="fw-medium">Email:</span> {{ $order->email }}</li>
+                                <li class="mb-2"><span class="fw-medium">Phone:</span> {{ $order->phone }}</li>
+                                <li class="mb-2"><span class="fw-medium">Address:</span> 
                                     {{ $order->street }}, {{ $order->city }}, {{ $order->province }}, {{ $order->country }}
                                 </li>
                             </ul>
                         </div>
-                        
-                        <!-- Right Side: Product Images -->
+
                         <div class="col-md-7">
                             <h6 class="fw-semibold mb-3">Ordered Products</h6>
                             <div class="row g-3">
@@ -71,23 +65,29 @@
                         </div>
                     </div>
 
-                   <!-- Cancel Button (Bottom Right) -->
-<div class="d-flex justify-content-end mt-4">
-    <button class="btn btn-outline-success me-2 confirm-order-btn" data-id="{{ $order->id }}">
-        <i class="bx bx-check-circle me-1"></i> Confirm Order
-    </button>
-    <button class="btn btn-outline-danger cancel-order-btn" data-id="{{ $order->id }}">
-        <i class="bx bx-x-circle me-1"></i> Cancel Order
-    </button>
-</div>
+                    <div class="order-status-message mt-3"></div>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <button class="btn btn-outline-success me-2 confirm-order-btn" data-id="{{ $order->id }}">
+                            <i class="bx bx-check-circle me-1"></i> Confirm Order
+                        </button>
+                        <button class="btn btn-outline-danger cancel-order-btn" data-id="{{ $order->id }}">
+                            <i class="bx bx-x-circle me-1"></i> Cancel Order
+                        </button>
+                    </div>
                 </div>
             </div>
         @endforeach
     @endif
+</div>
+@endsection
+
 @push('scripts')
 <script>
+    // Confirm Order
     $('.confirm-order-btn').on('click', function () {
         const orderId = $(this).data('id');
+
         $.ajax({
             url: `/order/${orderId}/confirm`,
             method: 'POST',
@@ -95,8 +95,17 @@
                 _token: '{{ csrf_token() }}'
             },
             success: function (res) {
-                showCustomAlert(res.message);
-                location.reload();
+                const card = $(`.order-card[data-id="${orderId}"]`);
+                const messageHtml = `
+                    <div class="alert alert-success m-0">${res.message}</div>`;
+                
+                card.find('.order-status-message').html(messageHtml);
+
+                // ✅ Update status badge
+                card.find('.order-status-badge')
+                    .removeClass()
+                    .addClass('badge bg-success order-status-badge')
+                    .text(res.status ?? 'Confirmed');
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
@@ -105,8 +114,10 @@
         });
     });
 
+    // Cancel Order
     $('.cancel-order-btn').on('click', function () {
         const orderId = $(this).data('id');
+
         $.ajax({
             url: `/order/${orderId}/cancel`,
             method: 'POST',
@@ -114,8 +125,17 @@
                 _token: '{{ csrf_token() }}'
             },
             success: function (res) {
-                showCustomAlert(res.message);
-                location.reload();
+                const card = $(`.order-card[data-id="${orderId}"]`);
+                const messageHtml = `
+                    <div class="alert alert-danger m-0">${res.message}</div>`;
+
+                card.find('.order-status-message').html(messageHtml);
+
+                // ✅ Update status badge
+                card.find('.order-status-badge')
+                    .removeClass()
+                    .addClass('badge bg-danger order-status-badge')
+                    .text(res.status ?? 'Cancelled');
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
@@ -125,10 +145,3 @@
     });
 </script>
 @endpush
-
-
-
-
-@endsection
-
-
