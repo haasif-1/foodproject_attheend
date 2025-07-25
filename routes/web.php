@@ -66,6 +66,9 @@ Route::get('orderedproduct',[assignproduct::class,'myOrders'])->name('orderedpro
 
 Route::get('orderslist',[assignproduct::class,'adminview_orders'])->name('orderslist');
 
+Route::post('/order/{id}/confirm', [assignproduct::class, 'confirmOrder'])->name('order.confirm');
+Route::post('/order/{id}/cancel', [assignproduct::class, 'cancelOrder'])->name('order.cancel');
+
 
 Route::get('admin', function () {
     return view('pages.adminpage');
@@ -73,9 +76,6 @@ Route::get('admin', function () {
 
 
 Route::get('user_dashboard',[logincontroller::class,'userHome'])->name('user_dashboard');
-
-
-
 
 
 

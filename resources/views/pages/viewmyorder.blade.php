@@ -16,6 +16,17 @@
                 <span class="badge bg-label-success">Total: Rs. {{ number_format($order->amount) }}</span>
             </div>
 
+            {{-- 🟢 Status Message --}}
+            @if ($order->status === 'confirmed')
+                <div class="alert alert-success m-3 mb-0">
+                    ✅ Your order has been <strong>confirmed</strong> by the admin.
+                </div>
+            @elseif ($order->status === 'cancelled')
+                <div class="alert alert-danger m-3 mb-0">
+                    ❌ Your order was <strong>cancelled</strong> by the admin.
+                </div>
+            @endif
+
             <div class="card-body">
                 <div class="row g-4">
                     @foreach ($order->products as $product)
@@ -44,7 +55,7 @@
             </div>
         </div>
     @endforelse
-    
+
     <div class="mt-4 text-end">
         <a href="{{ route('user_dashboard') }}" class="btn btn-secondary">
             <i class="bx bx-arrow-back me-1"></i> Back to Dashboard

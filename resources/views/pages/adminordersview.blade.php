@@ -19,6 +19,17 @@
                         <span class="badge bg-label-success me-1">Total: Rs. {{ number_format($order->amount) }}</span>
                     </div>
                 </div>
+
+                  {{-- 🟢 Status Message --}}
+            @if ($order->status === 'confirmed')
+                <div class="alert alert-success m-3 mb-0">
+                    ✅ Your order has been <strong>confirmed</strong> by the admin.
+                </div>
+            @elseif ($order->status === 'cancelled')
+                <div class="alert alert-danger m-3 mb-0">
+                    ❌ Your order was <strong>cancelled</strong> by the admin.
+                </div>
+            @endif
                 <div class="card-body">
                     <div class="row g-4">
                         <!-- Left Side: Order Details -->
@@ -60,58 +71,63 @@
                         </div>
                     </div>
 
-                    <!-- Cancel Button (Bottom Right) -->
-                    <div class="d-flex justify-content-end mt-4">
-                        <button class="btn btn-outline-danger cancel-order-btn">
-                            <i class="bx bx-x-circle me-1"></i> Cancel Order
-                        </button>
-                    </div>
+                   <!-- Cancel Button (Bottom Right) -->
+<div class="d-flex justify-content-end mt-4">
+    <button class="btn btn-outline-success me-2 confirm-order-btn" data-id="{{ $order->id }}">
+        <i class="bx bx-check-circle me-1"></i> Confirm Order
+    </button>
+    <button class="btn btn-outline-danger cancel-order-btn" data-id="{{ $order->id }}">
+        <i class="bx bx-x-circle me-1"></i> Cancel Order
+    </button>
+</div>
                 </div>
             </div>
         @endforeach
     @endif
-
-    <div class="mt-4">
-        <a href="{{ route('admin_dashboard') }}" class="btn btn-primary">
-            <i class="bx bx-left-arrow-alt me-1"></i> Back to Dashboard
-        </a>
-    </div>
-</div>
-
-
 @push('scripts')
 <script>
-    $(document).ready(function () {
-        $('.cancel-order-btn').click(function () {
-            let card = $(this).closest('.order-card');
-            let orderId = card.data('id');
+    $('.confirm-order-btn').on('click', function () {
+        const orderId = $(this).data('id');
+        $.ajax({
+            url: `/order/${orderId}/confirm`,
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function (res) {
+                showCustomAlert(res.message);
+                location.reload();
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                showCustomAlert('Something went wrong while confirming the order.');
+            }
+        });
+    });
 
-            showCustomConfirm("Are you sure you want to cancel this order?", function () {
-                $.ajax({
-                    url: `/orders/${orderId}`,
-                    type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function (response) {
-                        // Remove card from DOM
-                        card.fadeOut(300, function () {
-                            $(this).remove();
-                        });
-
-                        // Optional: show a message
-                        showCustomAlert(response.message);
-                    },
-                    error: function (xhr) {
-                        showCustomAlert(xhr.responseJSON.message || "Something went wrong.");
-                    }
-                });
-            });
+    $('.cancel-order-btn').on('click', function () {
+        const orderId = $(this).data('id');
+        $.ajax({
+            url: `/order/${orderId}/cancel`,
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function (res) {
+                showCustomAlert(res.message);
+                location.reload();
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                showCustomAlert('Something went wrong while cancelling the order.');
+            }
         });
     });
 </script>
-
 @endpush
+
+
+
 
 @endsection
 

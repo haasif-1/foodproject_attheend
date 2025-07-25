@@ -18,6 +18,8 @@ class order extends Model
     'street',
     'product_ids',
     'amount',
+    'status ',
+    'cancelled_at',
 ];
 
     public function user()

@@ -81,21 +81,40 @@ public function myOrders()
 
 public function adminview_orders()
 {
-$orders = Order::all();
+    $orders = Order::all();
 
-foreach ($orders as $order) {
-    $productIds = json_decode($order->product_ids, true) ?? [];
+    foreach ($orders as $order) {
+        $productIds = json_decode($order->product_ids, true) ?? [];
 
-    if (is_array($productIds) && count($productIds) > 0) {
-        $products = Product::whereIn('id', $productIds)->get();
-    } else {
-        $products = collect();
+        $products = is_array($productIds) && count($productIds) > 0
+            ? Product::whereIn('id', $productIds)->get()
+            : collect();
+
+        $order->product_items = $products;
     }
-    $order->product_items = $products;
-}
-
 
     return view('pages.adminordersview', compact('orders'));
+}
+
+// Confirm
+public function confirmOrder($id)
+{
+    $order = Order::findOrFail($id);
+    $order->status = 'confirmed';
+    $order->save();
+
+    return response()->json(['message' => 'Order confirmed']);
+}
+
+// Cancel
+public function cancelOrder($id)
+{
+    $order = Order::findOrFail($id);
+    $order->status = 'cancelled';
+    $order->cancelled_at = now();
+    $order->save();
+
+    return response()->json(['message' => 'Order cancelled and will be deleted in 24 hours']);
 }
 
 
