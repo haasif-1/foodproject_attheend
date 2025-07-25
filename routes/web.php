@@ -68,6 +68,7 @@ Route::get('orderslist',[assignproduct::class,'adminview_orders'])->name('orders
 
 Route::post('/order/{id}/confirm', [assignproduct::class, 'confirmOrder'])->name('order.confirm');
 Route::post('/order/{id}/cancel', [assignproduct::class, 'cancelOrder'])->name('order.cancel');
+Route::post('/orders/filter', [assignproduct::class, 'filterOrders'])->name('orders.filter');
 
 
 Route::get('admin', function () {
