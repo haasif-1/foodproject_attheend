@@ -24,7 +24,9 @@ Route::post('logincontroller',[logincontroller::class,'login'])->name('logincont
 
 Route::post('addproducts',[addproductcontroller::class,'addProduct'])->name('addproducts');
 
-Route::get('showitem',[addproductcontroller::class,'showProducts'])->name('showitem');
+Route::get('showitem', [addproductcontroller::class, 'showProducts'])
+    ->middleware('role:admin')
+    ->name('showitem');
 
 Route::delete('/deleteproduct/{id}', [addproductcontroller::class, 'destroy'])->name('deleteproduct');;
 
