@@ -12,6 +12,13 @@
                 <h4 class="mb-2 text-center">Welcome to Food Ordering 👋</h4>
                 <p class="mb-4 text-center">Please sign-in to your account</p>
 
+                {{-- Show session error --}}
+                @if(session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <form class="mb-3" action="{{ route('logincontroller') }}" method="post">
                     @csrf
                     <div class="mb-3">

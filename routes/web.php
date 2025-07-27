@@ -8,25 +8,63 @@ use App\Http\Controllers\logincontroller;
 use App\Http\Controllers\projectuserscontroller;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
+Route::post('/logout', function () {
+    Auth::logout();
+    session()->invalidate();
+    session()->regenerateToken();
+    return redirect('/login'); // or redirect('/')
+})->name('logout');
+
+
+Route::get('/', function () {
+    if (Auth::check()) {
+        $user = Auth::user();
+
+        if ($user->hasRole('admin')) {
+            return redirect()->route('admin_dashboard');
+        } elseif ($user->hasRole('user')) {
+            return redirect()->route('user_dashboard');
+        }
+
+        // Optional fallback
+        Auth::logout();
+        return redirect()->route('login')->with('error', 'Unauthorized role.');
+    }
+
+    // Guest user
+    return redirect()->route('register');
+});
+
+Route::middleware('guest')->group(function () {
+    Route::view('/login', 'auth.login')->name('login');
+    Route::view('/register', 'auth.register')->name('register');
+});
 
 
 
-Route::view('/','auth.register');
 
-Route::get('/login', function () {
-    return view('auth.login');
-})->name("login");
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('admin', fn() => view('pages.adminpage'))->name('admin_dashboard');
+    Route::get('showitem', [AddProductController::class, 'showProducts'])->name('showitem');
+    Route::get('userlist', [ProjectUsersController::class, 'userlist'])->name('userlist');
+    Route::get('orderslist', [AssignProduct::class, 'adminview_orders'])->name('orderslist');
+});
 
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('user_dashboard', [LoginController::class, 'userHome'])->name('user_dashboard');
+    Route::get('userdatacheck', [ProjectUsersController::class, 'datauser'])->name('userdatacheck');
+    Route::get('showallproducts', [AssignProduct::class, 'showproducts'])->name('showallproducts');
+    Route::get('orderedproduct', [AssignProduct::class, 'myOrders'])->name('orderedproduct');
+    Route::get('cartedproduct', [AddToCartController::class, 'showcart'])->name('cartedproduct');
+});
 
 Route::post('registercontroller',[usercontroller::class,'register'])->name('registercontroller');
 
 Route::post('logincontroller',[logincontroller::class,'login'])->name('logincontroller');
 
 Route::post('addproducts',[addproductcontroller::class,'addProduct'])->name('addproducts');
-
-Route::get('showitem', [addproductcontroller::class, 'showProducts'])
-    ->middleware('role:admin')
-    ->name('showitem');
 
 Route::delete('/deleteproduct/{id}', [addproductcontroller::class, 'destroy'])->name('deleteproduct');;
 
@@ -36,17 +74,7 @@ Route::post('/updateproduct', [addproductcontroller::class, 'update'])->name('up
 
 Route::get('/products/search', [addproductcontroller::class, 'searchProducts'])->name('search.products');
 
-
-Route::get('userlist',[projectuserscontroller::class,'userlist'])->name('userlist');
-
 Route::get('deleteuser/{id}', [projectuserscontroller::class, 'deleteuser'])->name("deleteuser");
-
-
-// Route::get('edituser/{id}',[projectuserscontroller::class,'edituser'])->name("edituser");
-
-// Route::put('updateuser/{id}',[projectuserscontroller::class,'updateuser'])->name('updateuser');
-
-Route::post('userdatacheck',[projectuserscontroller::class,'datauser'])->name('userdatacheck');
 
 Route::put('/user/change-password/{id}', [projectuserscontroller::class, 'changePassword'])->name('user.changePassword');
 
@@ -54,35 +82,12 @@ Route::get('/user/edit/{id}', [projectuserscontroller::class, 'showEditForm'])->
 
 Route::put('/user/update/{id}', [projectuserscontroller::class, 'updateUserInfo'])->name('user.update');
 
-Route::get('showallproducts',[assignproduct::class,'showproducts'])->name('showallproducts');
-
 Route::post('saveafterselect', [addtocartcontroller::class, 'addtocart'])->name('saveafterselect');
 
 Route::post('placeorder',[assignproduct::class,'placeorder_function'])->name('placeorder');
 
-Route::get('cartedproduct',[addtocartcontroller::class,'showcart'])->name('cartedproduct');
-
 Route::delete('/orders/{id}', [assignproduct::class, 'destroy'])->name('orders.destroy');
-
-Route::get('orderedproduct',[assignproduct::class,'myOrders'])->name('orderedproduct');
-
-Route::get('orderslist',[assignproduct::class,'adminview_orders'])->name('orderslist');
 
 Route::post('/order/{id}/confirm', [assignproduct::class, 'confirmOrder'])->name('order.confirm');
 Route::post('/order/{id}/cancel', [assignproduct::class, 'cancelOrder'])->name('order.cancel');
 Route::post('/orders/filter', [assignproduct::class, 'filterOrders'])->name('orders.filter');
-
-
-Route::get('admin', function () {
-    return view('pages.adminpage');
-})->name("admin_dashboard");
-
-
-Route::get('user_dashboard',[logincontroller::class,'userHome'])->name('user_dashboard');
-
-
-
-
-
-
-
